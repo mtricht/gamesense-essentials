@@ -106,7 +106,8 @@ class EventProducer(val client: ApiClient): TimerTask() {
             if (line.trim { it <= ' ' } != "") {
                 val lines = line.split(",").toTypedArray()
                 val potentialSongName = lines[lines.size - 1].replace("\"", "")
-                if (potentialSongName == "N/A" || potentialSongName.contains("Spotify")) {
+                if (potentialSongName == "N/A" || potentialSongName.startsWith("Spotify")
+                    || potentialSongName.startsWith("INFO: ") || !potentialSongName.contains(" - ")) {
                     continue
                 }
                 song = potentialSongName
