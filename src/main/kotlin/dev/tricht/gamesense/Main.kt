@@ -6,13 +6,12 @@ import dev.tricht.gamesense.model.*
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
 import java.io.File
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.*
 
 val mapper = jacksonObjectMapper()
 const val GAME_NAME = "GAMESENSE_ESSENTIALS"
 const val CLOCK_EVENT = "CLOCK"
+const val VOLUME_EVENT = "VOLUME"
 
 fun main() {
     val address = getGamesenseAddress()
@@ -22,21 +21,8 @@ fun main() {
         .build()
     val client = retrofit.create(ApiClient::class.java)
     registerHandlers(client)
-
     val timer = Timer()
-    val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
-    val task = object : TimerTask() {
-        override fun run() {
-            client.sendEvent(Event(
-                GAME_NAME,
-                CLOCK_EVENT,
-                Data(
-                    LocalDateTime.now().format(formatter)
-                )
-            )).execute()
-        }
-    }
-    timer.schedule(task, 0, 1000)
+    timer.schedule(EventProducer(client), 0, 250)
 }
 
 fun getGamesenseAddress(): String {
@@ -46,16 +32,44 @@ fun getGamesenseAddress(): String {
 }
 
 fun registerHandlers(client: ApiClient) {
-    val event = EventRegistration(
+    val cloclHandler = EventRegistration(
         GAME_NAME,
         CLOCK_EVENT,
         listOf(
             Handler(
-                listOf(HandlerData(
-                    iconId = 15
-                ))
+                listOf(
+                    HandlerData(
+                        iconId = 15
+                    )
+                )
             )
         )
     )
-    client.addEvent(event).execute()
+    client.addEvent(cloclHandler).execute()
+    val volumeHandler = EventRegistration(
+        GAME_NAME,
+        VOLUME_EVENT,
+        listOf(
+            Handler(
+                listOf(
+                    MultiLine(
+                        listOf(
+                            HandlerData(
+                                // Currently sets the arg to '()' instead of nothing
+                                arg = "",
+                                // So we fix that by adding some spaces on a prefix...
+                                prefix = "Volume" + " ".repeat(20)
+                            ),
+                            HandlerData(
+                                hasProgressBar = true,
+                                hasText = false
+                            )
+                        ),
+                        23
+                    )
+                )
+            )
+        )
+    )
+    client.addEvent(volumeHandler).execute()
 }

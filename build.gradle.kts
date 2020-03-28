@@ -14,6 +14,7 @@ dependencies {
     compile("com.fasterxml.jackson.module:jackson-module-kotlin:2.10.+")
     implementation("com.squareup.retrofit2:retrofit:2.8.1")
     implementation("com.squareup.retrofit2:converter-jackson:2.8.1")
+    implementation("com.github.bjoernpetersen:volctl:3.0.0")
 }
 
 tasks {

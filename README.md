@@ -2,10 +2,12 @@
 Essential OLED integrations for SteelSeries Gamesense.
 
 ## Currently implemented
-![Clock](photos/clock.png)
+<img src="https://raw.githubusercontent.com/mtricht/gamesense-essentials/master/photos/clock.png" width="450" />
+<img src="https://raw.githubusercontent.com/mtricht/gamesense-essentials/master/photos/volume.png" width="450" />
+
 
 ## Wishlist
-- [ ] Windows volume
+- [X] Windows volume
 - [ ] Spotify
 - [ ] Path of Exile
 - [ ] Settings UI/tray icon

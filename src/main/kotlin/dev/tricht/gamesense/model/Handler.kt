@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 
 @JsonSerialize
 data class Handler(
-    val datas: List<HandlerData>,
+    val datas: List<Any>,
     @JsonProperty("device-type")
     val deviceType: String = "screened",
     val mode: String = "screen",
