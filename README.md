@@ -8,6 +8,6 @@ Essential OLED integrations for SteelSeries Gamesense.
 
 ## Wishlist
 - [X] Windows volume
-- [ ] Spotify
+- [X] Spotify
 - [ ] Path of Exile
 - [ ] Settings UI/tray icon
