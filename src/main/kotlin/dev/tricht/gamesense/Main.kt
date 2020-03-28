@@ -7,6 +7,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
 import java.io.File
 import java.util.*
+import kotlin.system.exitProcess
 
 val mapper = jacksonObjectMapper()
 const val GAME_NAME = "GAMESENSE_ESSENTIALS"
@@ -37,7 +38,7 @@ fun getGamesenseAddress(): String {
 }
 
 fun registerHandlers(client: ApiClient) {
-    val cloclHandler = EventRegistration(
+    val clockHandler = EventRegistration(
         GAME_NAME,
         CLOCK_EVENT,
         listOf(
@@ -50,7 +51,11 @@ fun registerHandlers(client: ApiClient) {
             )
         )
     )
-    client.addEvent(cloclHandler).execute()
+    var response = client.addEvent(clockHandler).execute()
+    if (!response.isSuccessful) {
+        println("Failed to add clock handler, error: " + response.errorBody()?.string())
+        exitProcess(1)
+    }
     val volumeHandler = EventRegistration(
         GAME_NAME,
         VOLUME_EVENT,
@@ -76,8 +81,11 @@ fun registerHandlers(client: ApiClient) {
             )
         )
     )
-    client.addEvent(volumeHandler).execute()
-
+    response = client.addEvent(volumeHandler).execute()
+    if (!response.isSuccessful) {
+        println("Failed to add volume handler, error: " + response.errorBody()?.string())
+        exitProcess(1)
+    }
     val songHandler = EventRegistration(
         GAME_NAME,
         SONG_EVENT,
@@ -99,5 +107,9 @@ fun registerHandlers(client: ApiClient) {
             )
         )
     )
-    client.addEvent(songHandler).execute()
+    response = client.addEvent(songHandler).execute()
+    if (!response.isSuccessful) {
+        println("Failed to add song handler, error: " + response.errorBody()?.string())
+        exitProcess(1)
+    }
 }
