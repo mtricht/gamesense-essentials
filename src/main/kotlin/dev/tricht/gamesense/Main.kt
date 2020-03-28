@@ -15,13 +15,17 @@ const val VOLUME_EVENT = "VOLUME"
 const val SONG_EVENT = "SONG"
 
 fun main() {
+    println("Starting gamesense-essentials...")
     val address = getGamesenseAddress()
+    println("Address found: $address")
     val retrofit = Retrofit.Builder()
         .baseUrl("http://$address")
         .addConverterFactory(JacksonConverterFactory.create(mapper))
         .build()
     val client = retrofit.create(ApiClient::class.java)
+    println("Adding handlers...")
     registerHandlers(client)
+    println("Startup successful!\nLeave this command prompt open and see your OLED screen.")
     val timer = Timer()
     timer.schedule(EventProducer(client), 0, 50)
 }
