@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "dev.tricht.gamesense"
-version = "1.1.1"
+version = "1.1.2-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -61,6 +61,7 @@ runtime {
     options.set(listOf("--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages"))
     modules.set(listOf("java.desktop", "java.logging", "java.datatransfer"))
     jpackage {
+        imageOptions.addAll(listOf("--icon", "src/main/resources/icon.ico"))
         installerOptions.addAll(listOf("--win-per-user-install", "--win-dir-chooser", "--win-menu", "--win-shortcut"))
     }
 }
