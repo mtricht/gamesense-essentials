@@ -56,7 +56,7 @@ class EventProducer(val client: ApiClient): TimerTask() {
             currentFullSongName = song
             val songSplit = song.split(" - ")
             currentArtist = songSplit[0] + " "
-            currentSong = songSplit[1] + " "
+            currentSong = songSplit.drop(1).joinToString(" - ") + " "
         }
         client.sendEvent(
             Event(
