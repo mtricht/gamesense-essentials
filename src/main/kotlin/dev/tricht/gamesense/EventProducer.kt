@@ -3,23 +3,24 @@ package dev.tricht.gamesense
 import dev.tricht.gamesense.model.Data
 import dev.tricht.gamesense.model.Event
 import dev.tricht.gamesense.model.Frame
-import net.bjoernpetersen.volctl.VolumeControl
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
+import kotlin.math.roundToInt
 
 class EventProducer(val client: ApiClient): TimerTask() {
 
     private var waitTicks = 0
     private val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
-    private val volumeControl = VolumeControl()
-    private var currentVolume = volumeControl.volume
+    private var currentVolume = (SoundUtil.getMasterVolumeLevel() * 100).roundToInt()
     private var currentFullSongName = ""
     private var currentArtist = ""
     private var currentSong = ""
 
     override fun run() {
-        if (currentVolume != volumeControl.volume) {
+        val newVolume = (SoundUtil.getMasterVolumeLevel() * 100).roundToInt()
+        if (currentVolume != newVolume) {
+            currentVolume = newVolume
             sendVolumeEvent()
             return
         }
@@ -82,7 +83,6 @@ class EventProducer(val client: ApiClient): TimerTask() {
 
     private fun sendVolumeEvent() {
         waitTicks = 20
-        currentVolume = volumeControl.volume
         client.sendEvent(
             Event(
                 GAME_NAME,

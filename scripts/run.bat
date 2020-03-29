@@ -1,4 +1,4 @@
 @echo off
 cd %~dp0
-java -jar game-essentials.jar
+java -jar gamesense-essentials.jar
 @pause
