@@ -5,8 +5,10 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import dev.tricht.gamesense.model.*
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
+import java.awt.*
 import java.io.File
 import java.util.*
+import javax.swing.ImageIcon
 import kotlin.system.exitProcess
 
 val mapper = jacksonObjectMapper()
@@ -16,6 +18,7 @@ const val VOLUME_EVENT = "VOLUME"
 const val SONG_EVENT = "SONG"
 
 fun main() {
+    setupSystemtray()
     println("Starting gamesense-essentials...")
     val address = getGamesenseAddress()
     println("Address found: $address")
@@ -29,6 +32,25 @@ fun main() {
     println("Startup successful!\nLeave this command prompt open and see your OLED screen.")
     val timer = Timer()
     timer.schedule(EventProducer(client), 0, 50)
+}
+
+private fun setupSystemtray() {
+    if (!SystemTray.isSupported()) {
+        ErrorUtil.showErrorDialogAndExit("System is not supported.");
+        return
+    }
+    val tray = SystemTray.getSystemTray()
+    val menu = PopupMenu("Gamesense Essentials")
+    val title = MenuItem("Gamesense Essentials")
+    title.isEnabled = false
+    val exit = MenuItem("Exit")
+    menu.add(title)
+    menu.add(exit)
+    exit.addActionListener { exitProcess(0) }
+    val icon = TrayIcon(ImageIcon(EventProducer::class.java.classLoader.getResource("icon.png"), "Gamesense Essentials").image)
+    icon.isImageAutoSize = true
+    icon.popupMenu = menu
+    tray.add(icon)
 }
 
 fun getGamesenseAddress(): String {
