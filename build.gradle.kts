@@ -3,10 +3,11 @@ import org.gradle.jvm.tasks.Jar
 plugins {
     kotlin("jvm") version "1.3.70"
     java
+    id("org.beryx.runtime") version "1.8.0"
 }
 
 group = "dev.tricht.gamesense"
-version = "1.1-SNAPSHOT"
+version = "1.1.1-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -23,16 +24,16 @@ dependencies {
 
 tasks {
     compileKotlin {
-        kotlinOptions.jvmTarget = "1.8"
+        kotlinOptions.jvmTarget = "11"
     }
     compileTestKotlin {
-        kotlinOptions.jvmTarget = "1.8"
+        kotlinOptions.jvmTarget = "11"
     }
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 }
 
 val fatJar = task("fatJar", type = Jar::class) {
@@ -51,3 +52,13 @@ tasks {
         dependsOn(fatJar)
     }
 }
+
+application {
+    mainClassName = "dev.tricht.gamesense.MainKt"
+}
+
+runtime {
+    options.set(listOf("--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages"))
+    modules.set(listOf("java.desktop", "java.logging", "java.datatransfer"))
+}
+
