@@ -5,11 +5,15 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import dev.tricht.gamesense.model.*
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
-import java.awt.*
+import java.awt.MenuItem
+import java.awt.PopupMenu
+import java.awt.SystemTray
+import java.awt.TrayIcon
 import java.io.File
 import java.util.*
 import javax.swing.ImageIcon
 import kotlin.system.exitProcess
+
 
 val mapper = jacksonObjectMapper()
 const val GAME_NAME = "GAMESENSE_ESSENTIALS"
@@ -47,7 +51,8 @@ private fun setupSystemtray() {
     menu.add(title)
     menu.add(exit)
     exit.addActionListener { exitProcess(0) }
-    val icon = TrayIcon(ImageIcon(EventProducer::class.java.classLoader.getResource("icon.png"), "Gamesense Essentials").image)
+    val icon =
+        TrayIcon(ImageIcon(EventProducer::class.java.classLoader.getResource("icon.png"), "Gamesense Essentials").image)
     icon.isImageAutoSize = true
     icon.popupMenu = menu
     tray.add(icon)

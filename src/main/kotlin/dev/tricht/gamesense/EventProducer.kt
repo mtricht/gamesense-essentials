@@ -1,5 +1,12 @@
 package dev.tricht.gamesense
 
+import com.sun.jna.Native
+import com.sun.jna.Pointer
+import com.sun.jna.platform.win32.Kernel32
+import com.sun.jna.platform.win32.Psapi
+import com.sun.jna.platform.win32.User32
+import com.sun.jna.platform.win32.WinUser
+import com.sun.jna.ptr.IntByReference
 import dev.tricht.gamesense.model.Data
 import dev.tricht.gamesense.model.Event
 import dev.tricht.gamesense.model.Frame
@@ -95,25 +102,28 @@ class EventProducer(val client: ApiClient): TimerTask() {
     }
 
     fun getSpotifySongName(): String {
-        val p = Runtime.getRuntime()
-            .exec("""tasklist /fi "IMAGENAME eq spotify.exe" /fi "STATUS ne Not Responding" /v /nh /fo csv""")
-        val input = Scanner(p.inputStream)
-
         var song = ""
-        var line: String
-        while (input.hasNext()) {
-            line = input.nextLine()
-            if (line.trim { it <= ' ' } != "") {
-                val lines = line.split(",").toTypedArray()
-                val potentialSongName = lines[lines.size - 1].replace("\"", "")
-                if (potentialSongName == "N/A" || potentialSongName.startsWith("Spotify")
-                    || potentialSongName.startsWith("INFO: ") || !potentialSongName.contains(" - ")) {
-                    continue
+        val callback = WinUser.WNDENUMPROC { hwnd, _ ->
+            val pointer = IntByReference()
+            User32.INSTANCE.GetWindowThreadProcessId(hwnd, pointer)
+            val process = Kernel32.INSTANCE.OpenProcess(
+                Kernel32.PROCESS_QUERY_INFORMATION or Kernel32.PROCESS_VM_READ, false, pointer.value
+            )
+            val baseNameBuffer = CharArray(1024 * 2)
+            Psapi.INSTANCE.GetModuleFileNameExW(process, null, baseNameBuffer, 1024)
+            val processPath: String = Native.toString(baseNameBuffer)
+            if (processPath.contains("Spotify.exe")) {
+                val titleLength = User32.INSTANCE.GetWindowTextLength(hwnd) + 1
+                val title = CharArray(titleLength)
+                User32.INSTANCE.GetWindowText(hwnd, title, titleLength)
+                val wText = Native.toString(title)
+                if (wText.contains(" - ")) {
+                    song = wText
                 }
-                song = potentialSongName
             }
+            true
         }
-        input.close()
+        User32.INSTANCE.EnumWindows(callback, Pointer.NULL)
         return song
     }
 }
