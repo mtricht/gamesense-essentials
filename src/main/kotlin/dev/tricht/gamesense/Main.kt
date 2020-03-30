@@ -132,6 +132,16 @@ fun registerHandlers(client: ApiClient) {
                     )
                 )
             )
+        ),
+        listOf(
+            DataField(
+                "artist",
+                "Arist"
+            ),
+            DataField(
+                "song",
+                "Song"
+            )
         )
     )
     response = client.addEvent(songHandler).execute()
