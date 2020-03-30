@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "dev.tricht.gamesense"
-version = "1.1.3-SNAPSHOT"
+version = "1.1.4-SNAPSHOT"
 
 repositories {
     mavenCentral()
