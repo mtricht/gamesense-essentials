@@ -97,12 +97,12 @@ class EventProducer(val client: ApiClient): TimerTask() {
     fun getSpotifySongName(): String {
         val p = Runtime.getRuntime()
             .exec("""tasklist /fi "IMAGENAME eq spotify.exe" /fi "STATUS ne Not Responding" /v /nh /fo csv""")
-        val `in` = Scanner(p.inputStream)
+        val input = Scanner(p.inputStream)
 
         var song = ""
         var line: String
-        while (`in`.hasNext()) {
-            line = `in`.nextLine()
+        while (input.hasNext()) {
+            line = input.nextLine()
             if (line.trim { it <= ' ' } != "") {
                 val lines = line.split(",").toTypedArray()
                 val potentialSongName = lines[lines.size - 1].replace("\"", "")
@@ -113,6 +113,7 @@ class EventProducer(val client: ApiClient): TimerTask() {
                 song = potentialSongName
             }
         }
+        input.close()
         return song
     }
 }
