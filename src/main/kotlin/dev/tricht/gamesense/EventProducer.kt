@@ -121,6 +121,7 @@ class EventProducer(val client: ApiClient): TimerTask() {
                     song = wText
                 }
             }
+            Kernel32.INSTANCE.CloseHandle(process)
             true
         }
         User32.INSTANCE.EnumWindows(callback, Pointer.NULL)
