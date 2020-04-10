@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "dev.tricht.gamesense"
-version = "1.1.5-SNAPSHOT"
+version = "1.1.5"
 
 repositories {
     mavenCentral()
@@ -20,6 +20,7 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-jackson:2.8.1")
     implementation("net.java.dev.jna:jna:4.5.0")
     implementation("net.java.dev.jna:jna-platform:4.5.0")
+    implementation("com.hynnet:jacob:1.18")
 }
 
 tasks {
@@ -57,6 +58,7 @@ application {
     mainClassName = "dev.tricht.gamesense.MainKt"
 }
 
+// export JAVA_HOME="C:\\Program Files\\AdoptOpenJDK\\jdk-14.0.0.36-hotspot\\"
 runtime {
     options.set(listOf("--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages"))
     modules.set(listOf("java.desktop", "java.logging", "java.datatransfer"))
@@ -66,3 +68,12 @@ runtime {
     }
 }
 
+tasks.jre {
+    doLast {
+        copy {
+            from("src/main/resources")
+            include("jacob-1.18-x64.dll")
+            into("build/jre/bin/")
+        }
+    }
+}
