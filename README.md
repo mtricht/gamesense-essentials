@@ -7,6 +7,8 @@ This programs adds the following to your SteelSeries OLED screen:
 - Volume slider when changing
 - Spotify and iTunes current artist and song playing
 
+[Download the latest version](https://github.com/mtricht/gamesense-essentials/releases/download/1.1.5/gamesense-essentials-1.1.5.msi)
+
 ## Demo
 Video: https://streamable.com/7wnmt  
 <img src="https://raw.githubusercontent.com/mtricht/gamesense-essentials/master/photos/clock.png" width="450" />  
