@@ -14,7 +14,6 @@ import java.util.*
 import javax.swing.ImageIcon
 import kotlin.system.exitProcess
 
-
 val mapper = jacksonObjectMapper()
 const val GAME_NAME = "GAMESENSE_ESSENTIALS"
 const val CLOCK_EVENT = "CLOCK"

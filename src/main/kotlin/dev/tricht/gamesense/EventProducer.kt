@@ -1,5 +1,9 @@
 package dev.tricht.gamesense
 
+import com.jacob.activeX.ActiveXComponent
+import com.jacob.com.ComFailException
+import com.jacob.com.ComThread
+import com.jacob.com.Dispatch
 import com.sun.jna.Native
 import com.sun.jna.Pointer
 import com.sun.jna.platform.win32.Kernel32
@@ -7,6 +11,7 @@ import com.sun.jna.platform.win32.Psapi
 import com.sun.jna.platform.win32.User32
 import com.sun.jna.platform.win32.WinUser
 import com.sun.jna.ptr.IntByReference
+import dev.tricht.gamesense.itunes.ITTrack
 import dev.tricht.gamesense.model.Data
 import dev.tricht.gamesense.model.Event
 import dev.tricht.gamesense.model.Frame
@@ -15,7 +20,7 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.math.roundToInt
 
-class EventProducer(val client: ApiClient): TimerTask() {
+class EventProducer(private val client: ApiClient): TimerTask() {
 
     private var waitTicks = 0
     private val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
@@ -23,6 +28,9 @@ class EventProducer(val client: ApiClient): TimerTask() {
     private var currentFullSongName = ""
     private var currentArtist = ""
     private var currentSong = ""
+    private var iTunesIsRunning = false
+    private var iTunes: ActiveXComponent? = null
+    private var iTunesTimeout = 0
 
     override fun run() {
         val newVolume = (SoundUtil.getMasterVolumeLevel() * 100).roundToInt()
@@ -35,9 +43,14 @@ class EventProducer(val client: ApiClient): TimerTask() {
             --waitTicks
             return
         }
-        val song = getSpotifySongName()
-        if (song != "") {
-            sendSpotifyEvent(song)
+        val spotifySong = getSpotifySongName()
+        if (spotifySong != "") {
+            sendSongEvent(spotifySong)
+            return
+        }
+        val iTunesSong = getiTunesSongName()
+        if (iTunesSong != "") {
+            sendSongEvent(iTunesSong)
             return
         }
         sendClockEvent()
@@ -55,7 +68,7 @@ class EventProducer(val client: ApiClient): TimerTask() {
         ).execute()
     }
 
-    private fun sendSpotifyEvent(song: String) {
+    private fun sendSongEvent(song: String) {
         if (song == currentFullSongName) {
             currentArtist = marquify(currentArtist)
             currentSong = marquify(currentSong)
@@ -81,7 +94,7 @@ class EventProducer(val client: ApiClient): TimerTask() {
         waitTicks = 4
     }
 
-    fun marquify(text: String): String {
+    private fun marquify(text: String): String {
         if (text.length <= 15) {
             return text
         }
@@ -101,7 +114,8 @@ class EventProducer(val client: ApiClient): TimerTask() {
         ).execute()
     }
 
-    fun getSpotifySongName(): String {
+    private fun getSpotifySongName(): String {
+        iTunesIsRunning = false
         var song = ""
         val callback = WinUser.WNDENUMPROC { hwnd, _ ->
             val pointer = IntByReference()
@@ -112,7 +126,7 @@ class EventProducer(val client: ApiClient): TimerTask() {
             val baseNameBuffer = CharArray(1024 * 2)
             Psapi.INSTANCE.GetModuleFileNameExW(process, null, baseNameBuffer, 1024)
             val processPath: String = Native.toString(baseNameBuffer)
-            if (processPath.contains("Spotify.exe")) {
+            if (processPath.endsWith("Spotify.exe")) {
                 val titleLength = User32.INSTANCE.GetWindowTextLength(hwnd) + 1
                 val title = CharArray(titleLength)
                 User32.INSTANCE.GetWindowText(hwnd, title, titleLength)
@@ -121,10 +135,43 @@ class EventProducer(val client: ApiClient): TimerTask() {
                     song = wText
                 }
             }
+            if (processPath.endsWith("iTunes.exe")) {
+                iTunesIsRunning = true
+            }
             Kernel32.INSTANCE.CloseHandle(process)
             true
         }
         User32.INSTANCE.EnumWindows(callback, Pointer.NULL)
+        return song
+    }
+
+    private fun getiTunesSongName(): String {
+        if (!iTunesIsRunning) {
+            return ""
+        }
+        if (iTunes == null) {
+            if (iTunesTimeout != 0) {
+                iTunesTimeout -= 1
+                return ""
+            }
+            ComThread.InitMTA(true);
+            iTunes = ActiveXComponent("iTunes.Application")
+        }
+        var song = ""
+        try {
+            if (Dispatch.get(iTunes, "PlayerState").int == 1) {
+                val item = iTunes?.getProperty("CurrentTrack")?.toDispatch()
+                val track = ITTrack(item)
+                song = track.artist + " - " + track.name
+                item?.safeRelease()
+            }
+        } catch (ec: ComFailException) {
+            // This probably means iTunes was closed. However, it takes some time for iTunes
+            // to "really" close. Wait 20 ticks, before trying to connect again.
+            // Else iTunes would just close and reopen immediately.
+            iTunesTimeout = 20
+            iTunes = null
+        }
         return song
     }
 }
