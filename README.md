@@ -1,7 +1,7 @@
 # gamesense-essentials
 Essential OLED integrations for SteelSeries Gamesense.
 
-This programs add the following to your SteelSeries OLED screen:
+This programs adds the following to your SteelSeries OLED screen:
 
 - A clock
 - Volume slider when changing
