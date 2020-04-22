@@ -15,26 +15,25 @@ import javax.swing.ImageIcon
 import kotlin.system.exitProcess
 
 val mapper = jacksonObjectMapper()
-const val GAME_NAME = "GAMESENSE_ESSENTIALS"
-const val CLOCK_EVENT = "CLOCK"
-const val VOLUME_EVENT = "VOLUME"
-const val SONG_EVENT = "SONG"
+const val GAME_NAME = "MEINEKACKA"
+const val TEXT_EVENT = "TEXT_EVENT"
 
 fun main() {
     setupSystemtray()
-    println("Starting gamesense-essentials...")
     val address = getGamesenseAddress()
-    println("Address found: $address")
     val retrofit = Retrofit.Builder()
         .baseUrl("http://$address")
         .addConverterFactory(JacksonConverterFactory.create(mapper))
         .build()
     val client = retrofit.create(ApiClient::class.java)
-    println("Adding handlers...")
-    registerHandlers(client)
-    println("Startup successful!\nLeave this command prompt open and see your OLED screen.")
+    val retrofit2 = Retrofit.Builder()
+        .baseUrl("https://pr0gramm.com")
+        .addConverterFactory(JacksonConverterFactory.create(mapper))
+        .build()
+    val programmerClient = retrofit2.create(ProgrammerApiClient::class.java)
+    registerHandler(client)
     val timer = Timer()
-    timer.schedule(EventProducer(client), 0, 50)
+    timer.schedule(EventProducer(client, programmerClient), 0, 500)
 }
 
 private fun setupSystemtray() {
@@ -43,15 +42,15 @@ private fun setupSystemtray() {
         return
     }
     val tray = SystemTray.getSystemTray()
-    val menu = PopupMenu("Gamesense Essentials")
-    val title = MenuItem("Gamesense Essentials")
+    val menu = PopupMenu("meineKACKA Gamesense")
+    val title = MenuItem("meineKACKA Gamesense")
     title.isEnabled = false
     val exit = MenuItem("Exit")
     menu.add(title)
     menu.add(exit)
     exit.addActionListener { exitProcess(0) }
     val icon =
-        TrayIcon(ImageIcon(EventProducer::class.java.classLoader.getResource("icon.png"), "Gamesense Essentials").image)
+        TrayIcon(ImageIcon(EventProducer::class.java.classLoader.getResource("icon.png"), "meineKACKA Gamesense").image)
     icon.isImageAutoSize = true
     icon.popupMenu = menu
     tray.add(icon)
@@ -63,89 +62,23 @@ fun getGamesenseAddress(): String {
     return props.address
 }
 
-fun registerHandlers(client: ApiClient) {
-    val clockHandler = EventRegistration(
+fun registerHandler(client: ApiClient) {
+    val handler = EventRegistration(
         GAME_NAME,
-        CLOCK_EVENT,
+        TEXT_EVENT,
         listOf(
             Handler(
                 listOf(
                     HandlerData(
-                        iconId = 15
+                        bold = true
                     )
                 )
             )
         )
     )
-    var response = client.addEvent(clockHandler).execute()
+    val response = client.addEvent(handler).execute()
     if (!response.isSuccessful) {
-        println("Failed to add clock handler, error: " + response.errorBody()?.string())
-        exitProcess(1)
-    }
-    val volumeHandler = EventRegistration(
-        GAME_NAME,
-        VOLUME_EVENT,
-        listOf(
-            Handler(
-                listOf(
-                    MultiLine(
-                        listOf(
-                            HandlerData(
-                                // Currently sets the arg to '()' instead of nothing
-                                arg = "",
-                                // So we fix that by adding some spaces on a prefix...
-                                prefix = "Volume" + " ".repeat(20)
-                            ),
-                            HandlerData(
-                                hasProgressBar = true,
-                                hasText = false
-                            )
-                        ),
-                        23
-                    )
-                )
-            )
-        )
-    )
-    response = client.addEvent(volumeHandler).execute()
-    if (!response.isSuccessful) {
-        println("Failed to add volume handler, error: " + response.errorBody()?.string())
-        exitProcess(1)
-    }
-    val songHandler = EventRegistration(
-        GAME_NAME,
-        SONG_EVENT,
-        listOf(
-            Handler(
-                listOf(
-                    MultiLine(
-                        listOf(
-                            HandlerData(
-                                contextFrameKey = "artist"
-                            ),
-                            HandlerData(
-                                contextFrameKey = "song"
-                            )
-                        ),
-                        23
-                    )
-                )
-            )
-        ),
-        listOf(
-            DataField(
-                "artist",
-                "Arist"
-            ),
-            DataField(
-                "song",
-                "Song"
-            )
-        )
-    )
-    response = client.addEvent(songHandler).execute()
-    if (!response.isSuccessful) {
-        println("Failed to add song handler, error: " + response.errorBody()?.string())
+        println("Failed to add handler, error: " + response.errorBody()?.string())
         exitProcess(1)
     }
 }
