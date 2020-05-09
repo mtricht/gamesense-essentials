@@ -42,9 +42,9 @@ class EventProducer(private val client: ApiClient): TimerTask() {
             --waitTicks
             return
         }
-        val spotifySong = getSpotifySongName()
-        if (spotifySong != "") {
-            sendSongEvent(spotifySong)
+        val potentialSong = getPotentialSong()
+        if (potentialSong != "") {
+            sendSongEvent(potentialSong)
             return
         }
         val iTunesSong = getiTunesSongName()
@@ -113,7 +113,7 @@ class EventProducer(private val client: ApiClient): TimerTask() {
         ).execute()
     }
 
-    private fun getSpotifySongName(): String {
+    private fun getPotentialSong(): String {
         iTunesIsRunning = false
         var song = ""
         val callback = WinUser.WNDENUMPROC { hwnd, _ ->
@@ -125,13 +125,13 @@ class EventProducer(private val client: ApiClient): TimerTask() {
             val baseNameBuffer = CharArray(1024 * 2)
             Psapi.INSTANCE.GetModuleFileNameExW(process, null, baseNameBuffer, 1024)
             val processPath: String = Native.toString(baseNameBuffer)
-            if (processPath.endsWith("Spotify.exe")) {
+            if (processPath.endsWith("Spotify.exe") || processPath.endsWith("MusicBee.exe")) {
                 val titleLength = User32.INSTANCE.GetWindowTextLength(hwnd) + 1
                 val title = CharArray(titleLength)
                 User32.INSTANCE.GetWindowText(hwnd, title, titleLength)
                 val wText = Native.toString(title)
                 if (wText.contains(" - ")) {
-                    song = wText
+                    song = wText.replace(" - MusicBee", "")
                 }
             }
             if (processPath.endsWith("iTunes.exe")) {
