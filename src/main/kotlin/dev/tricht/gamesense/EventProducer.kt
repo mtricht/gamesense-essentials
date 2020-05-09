@@ -11,10 +11,12 @@ import com.sun.jna.platform.win32.Psapi
 import com.sun.jna.platform.win32.User32
 import com.sun.jna.platform.win32.WinUser
 import com.sun.jna.ptr.IntByReference
+import dev.tricht.gamesense.com.steelseries.ApiClient
 import dev.tricht.gamesense.itunes.ITTrack
-import dev.tricht.gamesense.model.Data
-import dev.tricht.gamesense.model.Event
-import dev.tricht.gamesense.model.Frame
+import dev.tricht.gamesense.com.steelseries.model.Data
+import dev.tricht.gamesense.com.steelseries.model.Event
+import dev.tricht.gamesense.com.steelseries.model.Frame
+import dev.tricht.gamesense.model.SongInformation
 import java.text.DateFormat
 import java.util.*
 import kotlin.math.roundToInt
@@ -24,9 +26,7 @@ class EventProducer(private val client: ApiClient): TimerTask() {
     private var waitTicks = 0
     private val dateFormat = DateFormat.getTimeInstance()
     private var currentVolume = (SoundUtil.getMasterVolumeLevel() * 100).roundToInt()
-    private var currentFullSongName = ""
-    private var currentArtist = ""
-    private var currentSong = ""
+    private var songInformation: SongInformation? = null
     private var iTunesIsRunning = false
     private var iTunes: ActiveXComponent? = null
     private var iTunesTimeout = 0
@@ -68,36 +68,23 @@ class EventProducer(private val client: ApiClient): TimerTask() {
     }
 
     private fun sendSongEvent(song: String) {
-        if (song == currentFullSongName) {
-            currentArtist = marquify(currentArtist)
-            currentSong = marquify(currentSong)
-        } else {
-            currentFullSongName = song
-            val songSplit = song.split(" - ")
-            currentArtist = songSplit[0] + " "
-            currentSong = songSplit.drop(1).joinToString(" - ") + " "
+        if (songInformation == null || song != songInformation!!.fullSongName) {
+            songInformation = SongInformation(song)
         }
         client.sendEvent(
             Event(
                 GAME_NAME,
                 SONG_EVENT,
                 Data(
-                    currentFullSongName + System.currentTimeMillis(), // This is unused, but Steelseries 'caches' the value. So we have to change it.
+                    song + System.currentTimeMillis(), // This is unused, but Steelseries 'caches' the value. So we have to change it.
                     Frame(
-                        currentSong,
-                        currentArtist
+                        songInformation!!.song(),
+                        songInformation!!.artist()
                     )
                 )
             )
         ).execute()
         waitTicks = 4
-    }
-
-    private fun marquify(text: String): String {
-        if (text.length <= 15) {
-            return text
-        }
-        return text.substring(1) + text[0]
     }
 
     private fun sendVolumeEvent() {

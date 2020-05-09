@@ -1,4 +1,4 @@
-package dev.tricht.gamesense.model
+package dev.tricht.gamesense.com.steelseries.model
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonSerialize

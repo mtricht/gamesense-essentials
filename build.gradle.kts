@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "dev.tricht.gamesense"
-version = "1.1.6-SNAPSHOT"
+version = "1.1.7-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -58,7 +58,7 @@ application {
     mainClassName = "dev.tricht.gamesense.MainKt"
 }
 
-// export JAVA_HOME="C:\\Program Files\\AdoptOpenJDK\\jdk-14.0.0.36-hotspot\\"
+// export JAVA_HOME="C:\\Program Files\\AdoptOpenJDK\\jdk-14.0.1.7-hotspot\\"
 runtime {
     options.set(listOf("--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages"))
     modules.set(listOf("java.desktop", "java.logging", "java.datatransfer"))

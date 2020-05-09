@@ -1,7 +1,7 @@
-package dev.tricht.gamesense
+package dev.tricht.gamesense.com.steelseries
 
-import dev.tricht.gamesense.model.Event
-import dev.tricht.gamesense.model.EventRegistration
+import dev.tricht.gamesense.com.steelseries.model.Event
+import dev.tricht.gamesense.com.steelseries.model.EventRegistration
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.POST

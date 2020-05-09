@@ -1,4 +1,4 @@
-package dev.tricht.gamesense.model
+package dev.tricht.gamesense.com.steelseries.model
 
 data class Frame(
     val song: String,

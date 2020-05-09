@@ -2,6 +2,8 @@ package dev.tricht.gamesense
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import dev.tricht.gamesense.com.steelseries.ApiClient
+import dev.tricht.gamesense.com.steelseries.model.*
 import dev.tricht.gamesense.model.*
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
