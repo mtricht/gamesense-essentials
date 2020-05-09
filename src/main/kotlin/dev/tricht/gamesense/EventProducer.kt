@@ -15,15 +15,14 @@ import dev.tricht.gamesense.itunes.ITTrack
 import dev.tricht.gamesense.model.Data
 import dev.tricht.gamesense.model.Event
 import dev.tricht.gamesense.model.Frame
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import java.text.DateFormat
 import java.util.*
 import kotlin.math.roundToInt
 
 class EventProducer(private val client: ApiClient): TimerTask() {
 
     private var waitTicks = 0
-    private val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
+    private val dateFormat = DateFormat.getTimeInstance()
     private var currentVolume = (SoundUtil.getMasterVolumeLevel() * 100).roundToInt()
     private var currentFullSongName = ""
     private var currentArtist = ""
@@ -62,7 +61,7 @@ class EventProducer(private val client: ApiClient): TimerTask() {
                 GAME_NAME,
                 CLOCK_EVENT,
                 Data(
-                    LocalDateTime.now().format(formatter)
+                    dateFormat.format(Date())
                 )
             )
         ).execute()
