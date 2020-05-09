@@ -61,7 +61,7 @@ application {
 // export JAVA_HOME="C:\\Program Files\\AdoptOpenJDK\\jdk-14.0.1.7-hotspot\\"
 runtime {
     options.set(listOf("--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages"))
-    modules.set(listOf("java.desktop", "java.logging", "java.datatransfer"))
+    modules.set(listOf("java.desktop", "java.logging", "java.datatransfer", "jdk.localedata"))
     jpackage {
         imageOptions.addAll(listOf("--icon", "src/main/resources/icon.ico"))
         installerOptions.addAll(listOf("--win-per-user-install", "--win-dir-chooser", "--win-menu", "--win-shortcut"))
