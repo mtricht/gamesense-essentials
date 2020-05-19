@@ -133,7 +133,7 @@ fun registerHandlers(client: ApiClient) {
         listOf(
             DataField(
                 "artist",
-                "Arist"
+                "Artist"
             ),
             DataField(
                 "song",
