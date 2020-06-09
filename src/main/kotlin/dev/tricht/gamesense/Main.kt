@@ -4,7 +4,6 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import dev.tricht.gamesense.com.steelseries.ApiClient
 import dev.tricht.gamesense.com.steelseries.model.*
-import dev.tricht.gamesense.model.*
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
 import java.awt.MenuItem
@@ -24,15 +23,30 @@ const val SONG_EVENT = "SONG"
 
 fun main() {
     setupSystemtray()
-    val address = getGamesenseAddress()
+    var client: ApiClient? = null
+    var connected = false
+    while (!connected) {
+        try {
+            val address = getGamesenseAddress()
+            client = buildClient(address)
+            client.ping().execute()
+            connected = true
+        } catch (e: Exception) {
+            println("Failed to register app, steelseries engine probably not running? Retrying in 5 seconds")
+            Thread.sleep(5000)
+        }
+    }
+    registerHandlers(client!!)
+    val timer = Timer()
+    timer.schedule(EventProducer(client!!), 0, 50)
+}
+
+private fun buildClient(address: String): ApiClient {
     val retrofit = Retrofit.Builder()
         .baseUrl("http://$address")
         .addConverterFactory(JacksonConverterFactory.create(mapper))
         .build()
-    val client = retrofit.create(ApiClient::class.java)
-    registerHandlers(client)
-    val timer = Timer()
-    timer.schedule(EventProducer(client), 0, 50)
+    return retrofit.create(ApiClient::class.java)
 }
 
 private fun setupSystemtray() {

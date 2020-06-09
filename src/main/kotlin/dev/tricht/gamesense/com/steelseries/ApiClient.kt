@@ -4,6 +4,7 @@ import dev.tricht.gamesense.com.steelseries.model.Event
 import dev.tricht.gamesense.com.steelseries.model.EventRegistration
 import retrofit2.Call
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
 
 interface ApiClient {
@@ -11,4 +12,6 @@ interface ApiClient {
     fun addEvent(@Body body: EventRegistration): Call<Any>
     @POST("/game_event")
     fun sendEvent(@Body body: Event): Call<Any>
+    @GET("/")
+    fun ping(): Call<Any>
 }
