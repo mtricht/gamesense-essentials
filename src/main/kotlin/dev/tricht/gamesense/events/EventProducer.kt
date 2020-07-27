@@ -35,6 +35,7 @@ class EventProducer(
                 currentSong = SongInformation(potentialSong)
             }
             sendSongEvent()
+            return
         }
         sendClockEvent()
     }
