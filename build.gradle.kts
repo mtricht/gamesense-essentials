@@ -66,8 +66,8 @@ runtime {
     options.set(listOf("--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages"))
     modules.set(listOf("java.desktop", "java.logging", "java.datatransfer", "jdk.localedata"))
     jpackage {
-        imageOptions.addAll(listOf("--icon", "src/main/resources/icon.ico"))
         if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+            imageOptions.addAll(listOf("--icon", "src/main/resources/icon.ico"))
             installerOptions.addAll(
                 listOf(
                     "--win-per-user-install",
@@ -76,6 +76,8 @@ runtime {
                     "--win-shortcut"
                 )
             )
+        } else {
+            imageOptions.addAll(listOf("--icon", "src/main/resources/icon.icns"))
         }
     }
 }
