@@ -5,6 +5,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import com.sun.jna.Platform
 import dev.tricht.gamesense.com.steelseries.ApiClient
 import dev.tricht.gamesense.com.steelseries.model.*
+import dev.tricht.gamesense.events.DataFetcher
 import dev.tricht.gamesense.events.EventProducer
 import dev.tricht.gamesense.events.MacOSDataFetcher
 import dev.tricht.gamesense.events.WindowsDataFetcher
@@ -16,7 +17,9 @@ import java.awt.SystemTray
 import java.awt.TrayIcon
 import java.io.File
 import java.util.*
+import java.util.prefs.Preferences
 import javax.swing.ImageIcon
+import javax.swing.JOptionPane
 import kotlin.system.exitProcess
 
 val mapper = jacksonObjectMapper()
@@ -24,16 +27,19 @@ const val GAME_NAME = "GAMESENSE_ESSENTIALS"
 const val CLOCK_EVENT = "CLOCK"
 const val VOLUME_EVENT = "VOLUME"
 const val SONG_EVENT = "SONG"
+var timer = Timer()
+var client: ApiClient? = null
+var dataFetcher: DataFetcher? = null
+var preferences: Preferences = Preferences.userNodeForPackage(Main::class.java)
 
 fun main() {
     Main.setupSystemtray()
-    var client: ApiClient? = null
     var connected = false
     while (!connected) {
         try {
             val address = Main.getGamesenseAddress()
             client = Main.buildClient(address)
-            client.ping().execute()
+            client?.ping()?.execute()
             connected = true
         } catch (e: Exception) {
             println("Failed to register app, steelseries engine probably not running? Retrying in 5 seconds")
@@ -41,13 +47,12 @@ fun main() {
         }
     }
     Main.registerHandlers(client!!)
-    val timer = Timer()
-    val dataFetcher = if (Platform.isWindows()) {
+    dataFetcher = if (Platform.isWindows()) {
         WindowsDataFetcher()
     } else {
         MacOSDataFetcher()
     }
-    timer.schedule(EventProducer(client, dataFetcher), 0, Tick.tickRateInMs())
+    Main.startTimer()
 }
 
 class Main {
@@ -70,8 +75,31 @@ class Main {
             val title = MenuItem("Gamesense Essentials")
             title.isEnabled = false
             val exit = MenuItem("Exit")
+            val tickRate = MenuItem("Change tick rate")
             menu.add(title)
+            menu.add(tickRate)
             menu.add(exit)
+            tickRate.addActionListener {
+                val newTickRate = JOptionPane.showInputDialog(
+                    "Tick rate in milliseconds. Lower means faster updates on the OLED screen but more CPU usage",
+                    Tick.tickRateInMs()
+                )
+                if (newTickRate == null) {
+                    return@addActionListener
+                }
+                try {
+                    val newTickRateInt = newTickRate.trim().toInt()
+                    if (newTickRateInt <= 0) {
+                        return@addActionListener
+                    }
+                    timer.cancel()
+                    timer.purge()
+                    preferences.put("tickRate", newTickRate.trim())
+                    Tick.refreshCache()
+                    timer = Timer()
+                    startTimer()
+                } catch (e: Exception) {}
+            }
             exit.addActionListener { exitProcess(0) }
             val icon =
                 TrayIcon(ImageIcon(Main::class.java.classLoader.getResource("icon.png"), "Gamesense Essentials").image)
@@ -176,6 +204,9 @@ class Main {
                 println("Failed to add song handler, error: " + response.errorBody()?.string())
                 exitProcess(1)
             }
+        }
+        fun startTimer() {
+            timer.schedule(EventProducer(client!!, dataFetcher!!), 0, Tick.tickRateInMs())
         }
     }
 }
