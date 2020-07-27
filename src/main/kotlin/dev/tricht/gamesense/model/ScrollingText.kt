@@ -1,11 +1,13 @@
 package dev.tricht.gamesense.model
 
+import dev.tricht.gamesense.Tick
+
 data class ScrollingText(
     var _text: String
 ) {
 
     companion object {
-        const val MAX_DISPLAY_TEXT_LENGTH = 15
+        const val MAX_DISPLAY_TEXT_LENGTH = 12
     }
 
     var text = _text
@@ -16,7 +18,7 @@ data class ScrollingText(
             return field
         }
         if (field == originalText && allowedToPause) {
-            ticksToWait = 4
+            ticksToWait = Tick.msToTicks(200)
             return field
         }
         allowedToPause = true
@@ -25,7 +27,7 @@ data class ScrollingText(
     }
 
     private var allowedToPause = true
-    private var ticksToWait = 4
+    private var ticksToWait = Tick.msToTicks(200)
     private var originalText = _text
 
     init {

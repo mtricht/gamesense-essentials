@@ -47,7 +47,7 @@ fun main() {
     } else {
         MacOSDataFetcher()
     }
-    timer.schedule(EventProducer(client, dataFetcher), 0, 50)
+    timer.schedule(EventProducer(client, dataFetcher), 0, Tick.tickRateInMs())
 }
 
 class Main {

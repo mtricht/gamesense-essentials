@@ -12,6 +12,7 @@ import com.sun.jna.platform.win32.User32
 import com.sun.jna.platform.win32.WinUser
 import com.sun.jna.ptr.IntByReference
 import dev.tricht.gamesense.SoundUtil
+import dev.tricht.gamesense.Tick
 import dev.tricht.gamesense.itunes.ITTrack
 import kotlin.math.roundToInt
 
@@ -74,7 +75,7 @@ class WindowsDataFetcher: DataFetcher {
         }
         if (iTunes == null) {
             if (iTunesTimeout != 0) {
-                iTunesTimeout -= 1
+                --iTunesTimeout
                 return ""
             }
             ComThread.InitMTA(true);
@@ -90,9 +91,9 @@ class WindowsDataFetcher: DataFetcher {
             }
         } catch (ec: ComFailException) {
             // This probably means iTunes was closed. However, it takes some time for iTunes
-            // to "really" close. Wait 20 ticks, before trying to connect again.
+            // to "really" close. Wait 1 second, before trying to connect again.
             // Else iTunes would just close and reopen immediately.
-            iTunesTimeout = 20
+            iTunesTimeout = Tick.msToTicks(1000)
             iTunes = null
         }
         return song

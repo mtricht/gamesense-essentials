@@ -1,5 +1,7 @@
 package dev.tricht.gamesense.events
 
+import dev.tricht.gamesense.Tick
+
 @OptIn(ExperimentalStdlibApi::class)
 class MacOSDataFetcher : DataFetcher {
     private val volumeScript = arrayOf("osascript", "-e", "output volume of (get volume settings)")
@@ -21,7 +23,7 @@ class MacOSDataFetcher : DataFetcher {
         return try {
             val process = runtime.exec(volumeScript)
             process.waitFor()
-            volumeWaitTicks = 20
+            volumeWaitTicks = Tick.msToTicks(1500)
             val volume = Integer.parseInt(process.inputStream.readAllBytes().decodeToString().trim())
             if (volume != lastVolume) {
                 lastVolumeChange = System.currentTimeMillis()
@@ -42,7 +44,7 @@ class MacOSDataFetcher : DataFetcher {
         }
         val process = runtime.exec(spotifyScript)
         process.waitFor()
-        songWaitTicks = 20
+        songWaitTicks = Tick.msToTicks(1500)
         if (process.exitValue() != 0) {
             println(process.inputStream.readAllBytes().decodeToString().trim())
             lastSong = null

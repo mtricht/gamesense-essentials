@@ -50,7 +50,7 @@ class EventProducer(
                 )
             )
         ).execute()
-        waitTicks = 4
+        waitTicks = Tick.msToTicks(200)
     }
 
     private fun sendSongEvent() {
@@ -69,14 +69,14 @@ class EventProducer(
                 )
             )
         ).execute()
-        waitTicks = 4
+        waitTicks = Tick.msToTicks(200)
     }
 
     private fun sendVolumeEvent() {
         if (this.volume == null) {
             return
         }
-        waitTicks = 20
+        waitTicks = Tick.msToTicks(1000)
         client.sendEvent(
             Event(
                 GAME_NAME,
