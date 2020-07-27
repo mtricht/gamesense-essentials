@@ -6,6 +6,7 @@ import com.sun.jna.Platform
 import dev.tricht.gamesense.com.steelseries.ApiClient
 import dev.tricht.gamesense.com.steelseries.model.*
 import dev.tricht.gamesense.events.EventProducer
+import dev.tricht.gamesense.events.MacOSDataFetcher
 import dev.tricht.gamesense.events.WindowsDataFetcher
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
@@ -24,7 +25,6 @@ const val CLOCK_EVENT = "CLOCK"
 const val VOLUME_EVENT = "VOLUME"
 const val SONG_EVENT = "SONG"
 
-
 fun main() {
     Main.setupSystemtray()
     var client: ApiClient? = null
@@ -42,7 +42,12 @@ fun main() {
     }
     Main.registerHandlers(client!!)
     val timer = Timer()
-    timer.schedule(EventProducer(client, WindowsDataFetcher()), 0, 50)
+    val dataFetcher = if (Platform.isWindows()) {
+        WindowsDataFetcher()
+    } else {
+        MacOSDataFetcher()
+    }
+    timer.schedule(EventProducer(client, dataFetcher), 0, 50)
 }
 
 class Main {

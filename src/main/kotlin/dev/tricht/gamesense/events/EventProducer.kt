@@ -30,7 +30,7 @@ class EventProducer(
             return
         }
         val potentialSong = dataFetcher.getCurrentSong()
-        if (potentialSong != null) {
+        if (potentialSong != null && potentialSong != "") {
             sendSongEvent(potentialSong)
             return
         }
