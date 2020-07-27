@@ -1,4 +1,5 @@
 import org.gradle.jvm.tasks.Jar
+import org.apache.tools.ant.taskdefs.condition.Os
 
 plugins {
     kotlin("jvm") version "1.3.70"
@@ -7,7 +8,7 @@ plugins {
 }
 
 group = "dev.tricht.gamesense"
-version = "1.2.1-SNAPSHOT"
+version = "1.3.0"
 
 repositories {
     mavenCentral()
@@ -58,13 +59,24 @@ application {
     mainClassName = "dev.tricht.gamesense.MainKt"
 }
 
-// export JAVA_HOME="C:\\Program Files\\AdoptOpenJDK\\jdk-14.0.1.7-hotspot\\"
+// TODO: Use github actions...
+// Windows: export JAVA_HOME="C:\\Program Files\\AdoptOpenJDK\\jdk-14.0.1.7-hotspot\\"
+// MacOS: sdk use java 14.0.2.hs-adpt
 runtime {
     options.set(listOf("--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages"))
     modules.set(listOf("java.desktop", "java.logging", "java.datatransfer", "jdk.localedata"))
     jpackage {
         imageOptions.addAll(listOf("--icon", "src/main/resources/icon.ico"))
-        installerOptions.addAll(listOf("--win-per-user-install", "--win-dir-chooser", "--win-menu", "--win-shortcut"))
+        if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+            installerOptions.addAll(
+                listOf(
+                    "--win-per-user-install",
+                    "--win-dir-chooser",
+                    "--win-menu",
+                    "--win-shortcut"
+                )
+            )
+        }
     }
 }
 

@@ -31,8 +31,10 @@ class EventProducer(
         }
         val potentialSong = dataFetcher.getCurrentSong()
         if (potentialSong != null && potentialSong != "") {
-            sendSongEvent(potentialSong)
-            return
+            if (currentSong == null || potentialSong != currentSong!!.fullSongName) {
+                currentSong = SongInformation(potentialSong)
+            }
+            sendSongEvent()
         }
         sendClockEvent()
     }
@@ -47,21 +49,20 @@ class EventProducer(
                 )
             )
         ).execute()
+        waitTicks = 4
     }
 
-    private fun sendSongEvent(song: String) {
-        if (currentSong == null || song != currentSong!!.fullSongName) {
-            currentSong = SongInformation(song)
-        }
+    private fun sendSongEvent() {
+        val songName = currentSong!!.song()
         client.sendEvent(
             Event(
                 GAME_NAME,
                 SONG_EVENT,
                 Data(
                     // This is unused, but Steelseries 'caches' the value. So we have to change it.
-                    song + System.currentTimeMillis(),
+                    songName + System.currentTimeMillis(),
                     Frame(
-                        currentSong!!.song(),
+                        songName,
                         currentSong!!.artist()
                     )
                 )
