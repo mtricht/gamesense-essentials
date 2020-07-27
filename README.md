@@ -17,3 +17,7 @@ Video: https://streamable.com/7wnmt
 
 ## Startup
 To run after boot, create a shortcut to gamesense-essentials inside the "Startup" folder. Follow this [tutorial](https://www.howtogeek.com/208224/how-to-add-programs-files-and-folders-to-system-startup-in-windows-8.1/) if you're having trouble. Only works with version 1.2.0.
+
+## macOS
+If you're not seeing any song information on your OLED screen, make sure that the app has the correct permissions.  
+Go to `System Preferences -> Security & Privacy -> Accessibility` and add this application. Restart gamesense-essentials for it to work.
