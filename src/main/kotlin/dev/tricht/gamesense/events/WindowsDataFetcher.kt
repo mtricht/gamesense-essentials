@@ -1,4 +1,4 @@
-package dev.tricht.gamesense
+package dev.tricht.gamesense.events
 
 import com.jacob.activeX.ActiveXComponent
 import com.jacob.com.ComFailException
@@ -11,93 +11,30 @@ import com.sun.jna.platform.win32.Psapi
 import com.sun.jna.platform.win32.User32
 import com.sun.jna.platform.win32.WinUser
 import com.sun.jna.ptr.IntByReference
-import dev.tricht.gamesense.com.steelseries.ApiClient
+import dev.tricht.gamesense.SoundUtil
 import dev.tricht.gamesense.itunes.ITTrack
-import dev.tricht.gamesense.com.steelseries.model.Data
-import dev.tricht.gamesense.com.steelseries.model.Event
-import dev.tricht.gamesense.com.steelseries.model.Frame
-import dev.tricht.gamesense.model.SongInformation
-import java.text.DateFormat
-import java.util.*
 import kotlin.math.roundToInt
 
-class EventProducer(private val client: ApiClient): TimerTask() {
+class WindowsDataFetcher: DataFetcher {
 
-    private var waitTicks = 0
-    private val dateFormat = DateFormat.getTimeInstance()
-    private var currentVolume = (SoundUtil.getMasterVolumeLevel() * 100).roundToInt()
-    private var songInformation: SongInformation? = null
     private var iTunesIsRunning = false
     private var iTunes: ActiveXComponent? = null
     private var iTunesTimeout = 0
 
-    override fun run() {
-        val newVolume = (SoundUtil.getMasterVolumeLevel() * 100).roundToInt()
-        if (currentVolume != newVolume) {
-            currentVolume = newVolume
-            sendVolumeEvent()
-            return
-        }
-        if (waitTicks > 0) {
-            --waitTicks
-            return
-        }
+    override fun getVolume(): Int {
+        return (SoundUtil.getMasterVolumeLevel() * 100).roundToInt()
+    }
+
+    override fun getCurrentSong(): String? {
         val potentialSong = getPotentialSong()
         if (potentialSong != "") {
-            sendSongEvent(potentialSong)
-            return
+            return potentialSong
         }
         val iTunesSong = getiTunesSongName()
         if (iTunesSong != "") {
-            sendSongEvent(iTunesSong)
-            return
+            return iTunesSong
         }
-        sendClockEvent()
-    }
-
-    private fun sendClockEvent() {
-        client.sendEvent(
-            Event(
-                GAME_NAME,
-                CLOCK_EVENT,
-                Data(
-                    dateFormat.format(Date())
-                )
-            )
-        ).execute()
-    }
-
-    private fun sendSongEvent(song: String) {
-        if (songInformation == null || song != songInformation!!.fullSongName) {
-            songInformation = SongInformation(song)
-        }
-        client.sendEvent(
-            Event(
-                GAME_NAME,
-                SONG_EVENT,
-                Data(
-                    song + System.currentTimeMillis(), // This is unused, but Steelseries 'caches' the value. So we have to change it.
-                    Frame(
-                        songInformation!!.song(),
-                        songInformation!!.artist()
-                    )
-                )
-            )
-        ).execute()
-        waitTicks = 4
-    }
-
-    private fun sendVolumeEvent() {
-        waitTicks = 20
-        client.sendEvent(
-            Event(
-                GAME_NAME,
-                VOLUME_EVENT,
-                Data(
-                    currentVolume
-                )
-            )
-        ).execute()
+        return null
     }
 
     private fun getPotentialSong(): String {
@@ -160,4 +97,5 @@ class EventProducer(private val client: ApiClient): TimerTask() {
         }
         return song
     }
+
 }
