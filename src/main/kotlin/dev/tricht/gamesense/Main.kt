@@ -11,15 +11,9 @@ import dev.tricht.gamesense.events.MacOSDataFetcher
 import dev.tricht.gamesense.events.WindowsDataFetcher
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
-import java.awt.MenuItem
-import java.awt.PopupMenu
-import java.awt.SystemTray
-import java.awt.TrayIcon
 import java.io.File
 import java.util.*
 import java.util.prefs.Preferences
-import javax.swing.ImageIcon
-import javax.swing.JOptionPane
 import kotlin.system.exitProcess
 
 val mapper = jacksonObjectMapper()
@@ -31,9 +25,11 @@ var timer = Timer()
 var client: ApiClient? = null
 var dataFetcher: DataFetcher? = null
 var preferences: Preferences = Preferences.userNodeForPackage(Main::class.java)
+var clockEnabled = preferences.get("clock", "true").toBoolean()
+var volumeEnabled = preferences.get("volume", "true").toBoolean()
 
 fun main() {
-    Main.setupSystemtray()
+    SystemTray.setup()
     var connected = false
     while (!connected) {
         try {
@@ -63,49 +59,6 @@ class Main {
                 .addConverterFactory(JacksonConverterFactory.create(mapper))
                 .build()
             return retrofit.create(ApiClient::class.java)
-        }
-
-        fun setupSystemtray() {
-            if (!SystemTray.isSupported()) {
-                ErrorUtil.showErrorDialogAndExit("System is not supported.");
-                return
-            }
-            val tray = SystemTray.getSystemTray()
-            val menu = PopupMenu("Gamesense Essentials")
-            val title = MenuItem("Gamesense Essentials")
-            title.isEnabled = false
-            val exit = MenuItem("Exit")
-            val tickRate = MenuItem("Change tick rate")
-            menu.add(title)
-            menu.add(tickRate)
-            menu.add(exit)
-            tickRate.addActionListener {
-                val newTickRate = JOptionPane.showInputDialog(
-                    "Tick rate in milliseconds. Lower means faster updates on the OLED screen but more CPU usage",
-                    Tick.tickRateInMs()
-                )
-                if (newTickRate == null) {
-                    return@addActionListener
-                }
-                try {
-                    val newTickRateInt = newTickRate.trim().toInt()
-                    if (newTickRateInt <= 0) {
-                        return@addActionListener
-                    }
-                    timer.cancel()
-                    timer.purge()
-                    preferences.put("tickRate", newTickRate.trim())
-                    Tick.refreshCache()
-                    timer = Timer()
-                    startTimer()
-                } catch (e: Exception) {}
-            }
-            exit.addActionListener { exitProcess(0) }
-            val icon =
-                TrayIcon(ImageIcon(Main::class.java.classLoader.getResource("icon.png"), "Gamesense Essentials").image)
-            icon.isImageAutoSize = true
-            icon.popupMenu = menu
-            tray.add(icon)
         }
 
         fun getGamesenseAddress(): String {

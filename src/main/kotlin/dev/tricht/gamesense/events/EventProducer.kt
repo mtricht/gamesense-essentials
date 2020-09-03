@@ -41,6 +41,9 @@ class EventProducer(
     }
 
     private fun sendClockEvent() {
+        if (!clockEnabled) {
+            return
+        }
         client.sendEvent(
             Event(
                 GAME_NAME,
@@ -73,7 +76,7 @@ class EventProducer(
     }
 
     private fun sendVolumeEvent() {
-        if (this.volume == null) {
+        if (this.volume == null || !volumeEnabled) {
             return
         }
         waitTicks = Tick.msToTicks(1000)
