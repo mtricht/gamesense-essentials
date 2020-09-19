@@ -21,6 +21,7 @@ class WindowsDataFetcher: DataFetcher {
     private var iTunesIsRunning = false
     private var iTunes: ActiveXComponent? = null
     private var iTunesTimeout = 0
+    private val players = "(Spotify|MusicBee|AIMP|YouTube Music Desktop App).exe".toRegex()
 
     override fun getVolume(): Int {
         return (SoundUtil.getMasterVolumeLevel() * 100).roundToInt()
@@ -50,11 +51,14 @@ class WindowsDataFetcher: DataFetcher {
             val baseNameBuffer = CharArray(1024 * 2)
             Psapi.INSTANCE.GetModuleFileNameExW(process, null, baseNameBuffer, 1024)
             val processPath: String = Native.toString(baseNameBuffer)
-            if (processPath.endsWith("Spotify.exe") || processPath.endsWith("MusicBee.exe")) {
+            if (processPath.contains(players)) {
                 val titleLength = User32.INSTANCE.GetWindowTextLength(hwnd) + 1
                 val title = CharArray(titleLength)
                 User32.INSTANCE.GetWindowText(hwnd, title, titleLength)
                 val wText = Native.toString(title)
+                if (wText.contains("MediaPlayer SMTC")) {
+                    return@WNDENUMPROC true
+                }
                 if (wText.contains(" - ")) {
                     song = wText.replace(" - MusicBee", "")
                 }
