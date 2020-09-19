@@ -5,7 +5,7 @@ This programs adds the following to your SteelSeries OLED screen:
 
 - A clock
 - Volume slider when changing
-- Spotify, iTunes or MusicBee current artist and song
+- Supports Spotify, iTunes, MusicBee, AIMP and YouTube Music Desktop App for displaying current artist and song
 
 [Download for Windows](https://github.com/mtricht/gamesense-essentials/releases/download/1.5.0/gamesense-essentials-1.5.0.msi)  
 [Download for macOS (experimental)](https://github.com/mtricht/gamesense-essentials/releases/download/1.3.0/gamesense-essentials-1.3.0.dmg)
