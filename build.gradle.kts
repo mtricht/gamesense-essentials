@@ -60,7 +60,7 @@ application {
 }
 
 // TODO: Use github actions...
-// Windows: export JAVA_HOME="C:\\Program Files\\AdoptOpenJDK\\jdk-14.0.1.7-hotspot\\"
+// Windows: export JAVA_HOME="C:\\Program Files (x86)\\AdoptOpenJDK\\jdk-14.0.2.12-hotspot\\"
 // MacOS: sdk use java 14.0.2.hs-adpt
 runtime {
     options.set(listOf("--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages"))
@@ -86,7 +86,7 @@ tasks.jre {
     doLast {
         copy {
             from("src/main/resources")
-            include("jacob-1.18-x64.dll")
+            include("jacob-1.18-x86.dll")
             into("build/jre/bin/")
         }
     }

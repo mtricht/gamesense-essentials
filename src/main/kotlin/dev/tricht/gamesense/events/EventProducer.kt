@@ -19,12 +19,12 @@ class EventProducer(
     private var currentSong: SongInformation? = null
 
     override fun run() {
-        val oldVolume = this.volume
+       /* val oldVolume = this.volume
         this.volume = dataFetcher.getVolume()
         if (oldVolume != null && this.volume != oldVolume) {
             sendVolumeEvent()
             return
-        }
+        }*/
         if (waitTicks > 0) {
             --waitTicks
             return
