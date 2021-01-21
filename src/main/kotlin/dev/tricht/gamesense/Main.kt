@@ -26,6 +26,7 @@ var client: ApiClient? = null
 var dataFetcher: DataFetcher? = null
 var preferences: Preferences = Preferences.userNodeForPackage(Main::class.java)
 var clockEnabled = preferences.get("clock", "true").toBoolean()
+var clockIconEnabled = preferences.get("clockIcon", "true")!!.toBoolean()
 var volumeEnabled = preferences.get("volume", "true").toBoolean()
 
 fun main() {
@@ -73,24 +74,7 @@ class Main {
         }
 
         fun registerHandlers(client: ApiClient) {
-            val clockHandler = EventRegistration(
-                GAME_NAME,
-                CLOCK_EVENT,
-                listOf(
-                    Handler(
-                        listOf(
-                            HandlerData(
-                                iconId = 15
-                            )
-                        )
-                    )
-                )
-            )
-            var response = client.addEvent(clockHandler).execute()
-            if (!response.isSuccessful) {
-                println("Failed to add clock handler, error: " + response.errorBody()?.string())
-                exitProcess(1)
-            }
+            registerClockHandler(client)
             val volumeHandler = EventRegistration(
                 GAME_NAME,
                 VOLUME_EVENT,
@@ -116,7 +100,7 @@ class Main {
                     )
                 )
             )
-            response = client.addEvent(volumeHandler).execute()
+            var response = client.addEvent(volumeHandler).execute()
             if (!response.isSuccessful) {
                 println("Failed to add volume handler, error: " + response.errorBody()?.string())
                 exitProcess(1)
@@ -158,6 +142,28 @@ class Main {
                 exitProcess(1)
             }
         }
+
+        fun registerClockHandler(client: ApiClient) {
+            val clockHandler = EventRegistration(
+                GAME_NAME,
+                CLOCK_EVENT,
+                listOf(
+                    Handler(
+                        listOf(
+                            HandlerData(
+                                iconId = if (clockIconEnabled) 15 else 0
+                            )
+                        )
+                    )
+                )
+            )
+            val response = client.addEvent(clockHandler).execute()
+            if (!response.isSuccessful) {
+                println("Failed to add clock icon handler, error: " + response.errorBody()?.string())
+                exitProcess(1)
+            }
+        }
+
         fun startTimer() {
             timer.schedule(EventProducer(client!!, dataFetcher!!), 0, Tick.tickRateInMs())
         }
