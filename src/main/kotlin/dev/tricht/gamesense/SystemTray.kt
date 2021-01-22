@@ -2,8 +2,6 @@ package dev.tricht.gamesense
 
 import java.awt.*
 import java.awt.SystemTray
-import java.awt.event.ActionEvent
-import java.awt.event.ItemEvent
 import java.util.*
 import javax.swing.ImageIcon
 import javax.swing.JOptionPane
@@ -31,6 +29,14 @@ class SystemTray {
                 clockEnabled = menuItem.state
             }
             clock.state = preferences.get("clock", "true").toBoolean()
+            val clockIcon = CheckboxMenuItem("Enable clock icon")
+            clockIcon.addItemListener {
+                val menuItem = it.source as CheckboxMenuItem
+                preferences.put("clockIcon", menuItem.state.toString())
+                clockIconEnabled = menuItem.state
+                Main.registerClockHandler(client!!)
+            }
+            clockIcon.state = preferences.get("clockIcon", "true")!!.toBoolean()
             val volume = CheckboxMenuItem("Enable volume slider")
             volume.addItemListener {
                 val menuItem = it.source as CheckboxMenuItem
@@ -41,6 +47,7 @@ class SystemTray {
             menu.add(title)
             menu.add(volume)
             menu.add(clock)
+            menu.add(clockIcon)
             menu.add(tickRate)
             menu.add(exit)
             val icon =
