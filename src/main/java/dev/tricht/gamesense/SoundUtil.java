@@ -28,12 +28,13 @@ public class SoundUtil {
     private static final PointerByReference AudioEndpointVolume = new PointerByReference();
     private static final PointerByReference AudioMeterInformation = new PointerByReference();
 
-    static {
+    private static Function GetMasterVolumeLevel;
+    private static Function GetPeakValue;
 
+    static {
         if (!WinNT.S_OK.equals(Ole32.INSTANCE.CoInitialize(null))) {
             throw new RuntimeException("Ole32::CoInitialize() failed");
         }
-
         if (!WinNT.S_OK.equals(Ole32.INSTANCE.CoCreateInstance(
                 CLSID_MMDeviceEnumerator,
                 null,
@@ -42,7 +43,9 @@ public class SoundUtil {
                 MMDeviceEnumerator))) {
             throw new RuntimeException("Ole32::CoCreateInstance() failed");
         }
+    }
 
+    public static void Initialize() {
         Pointer MMDeviceEnumeratorPointer = MMDeviceEnumerator.getValue();
         Pointer MMDeviceEnumeratorVirtualTable = MMDeviceEnumeratorPointer.getPointer(0);
 
@@ -71,10 +74,9 @@ public class SoundUtil {
         if (!WinNT.S_OK.equals(Activate.invoke(WinNT.HRESULT.class, new Object[]{MMDevicePointer, IID_IAudioMeterInformation, CLSCTX_INPROC_SERVER, null, AudioMeterInformation}))) {
             throw new RuntimeException("IMMDevice::Activate( AudioMeterInformation ) failed");
         }
+        GetMasterVolumeLevel = GetMasterVolumeLevelFunction();
+        GetPeakValue = GetPeakValueFunction();
     }
-
-    private static final Function GetMasterVolumeLevel = GetMasterVolumeLevelFunction();
-    private static final Function GetPeakValue = GetPeakValueFunction();
 
     private static Function GetMasterVolumeLevelFunction() {
         Pointer AudioEndpointVolumePointer = AudioEndpointVolume.getValue();

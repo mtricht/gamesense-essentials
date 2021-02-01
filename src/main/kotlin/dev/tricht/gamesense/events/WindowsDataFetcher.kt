@@ -16,14 +16,24 @@ import dev.tricht.gamesense.Tick
 import dev.tricht.gamesense.itunes.ITTrack
 import kotlin.math.roundToInt
 
-class WindowsDataFetcher: DataFetcher {
+class WindowsDataFetcher() : DataFetcher {
 
     private var iTunesIsRunning = false
     private var iTunes: ActiveXComponent? = null
     private var iTunesTimeout = 0
+    private var masterVolumeTimeout = 0
     private val players = "(Spotify|MusicBee|AIMP|YouTube Music Desktop App).exe".toRegex()
 
+    init {
+        SoundUtil.Initialize()
+    }
+
     override fun getVolume(): Int {
+        if (masterVolumeTimeout == 25) {
+            masterVolumeTimeout = 0
+            SoundUtil.Initialize()
+        }
+        masterVolumeTimeout++
         return (SoundUtil.getMasterVolumeLevel() * 100).roundToInt()
     }
 
