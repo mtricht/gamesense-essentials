@@ -15,7 +15,7 @@ Video: https://streamable.com/7wnmt
 <img src="https://raw.githubusercontent.com/mtricht/gamesense-essentials/master/photos/volume.png" width="450" />
 
 ## Run on windows startup
-To run after boot, create a shortcut to gamesense-essentials inside the "Startup" folder. Follow this [tutorial](https://www.howtogeek.com/208224/how-to-add-programs-files-and-folders-to-system-startup-in-windows-8.1/) if you're having trouble. Only works with version 1.2.0.
+To run after boot, create a shortcut to gamesense-essentials inside the "Startup" folder. Follow this [tutorial](https://www.howtogeek.com/208224/how-to-add-programs-files-and-folders-to-system-startup-in-windows-8.1/) if you're having trouble.
 
 ## Tick rate
 Starting with v1.3.0, the tick rate/delay is now configurable through the system tray icon. This value determines how many times per second the OLED screen is updated.
