@@ -3,9 +3,10 @@ package dev.tricht.gamesense
 import java.awt.*
 import java.awt.SystemTray
 import java.util.*
-import javax.swing.ImageIcon
+import javax.imageio.ImageIO
 import javax.swing.JOptionPane
 import kotlin.system.exitProcess
+
 
 class SystemTray {
     companion object {
@@ -50,9 +51,9 @@ class SystemTray {
             menu.add(clockIcon)
             menu.add(tickRate)
             menu.add(exit)
-            val icon =
-                TrayIcon(ImageIcon(Main::class.java.classLoader.getResource("icon.png"), "Gamesense Essentials").image)
-            icon.isImageAutoSize = true
+            val trayIconImage = ImageIO.read(Main::class.java.classLoader.getResource("icon.png"))
+            val trayIconWidth = TrayIcon(trayIconImage).size.width
+            val icon = TrayIcon(trayIconImage.getScaledInstance(trayIconWidth, -1, Image.SCALE_SMOOTH))
             icon.popupMenu = menu
             tray.add(icon)
         }
