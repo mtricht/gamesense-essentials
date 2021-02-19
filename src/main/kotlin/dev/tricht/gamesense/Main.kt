@@ -28,6 +28,7 @@ var preferences: Preferences = Preferences.userNodeForPackage(Main::class.java)
 var clockEnabled = preferences.get("clock", "true").toBoolean()
 var clockIconEnabled = preferences.get("clockIcon", "true")!!.toBoolean()
 var volumeEnabled = preferences.get("volume", "true").toBoolean()
+var songInfoFlipEnabled = preferences.get("songInfoFlip", "false").toBoolean()
 
 fun main() {
     SystemTray.setup()
@@ -105,42 +106,7 @@ class Main {
                 println("Failed to add volume handler, error: " + response.errorBody()?.string())
                 exitProcess(1)
             }
-            val songHandler = EventRegistration(
-                GAME_NAME,
-                SONG_EVENT,
-                listOf(
-                    Handler(
-                        listOf(
-                            MultiLine(
-                                listOf(
-                                    HandlerData(
-                                        contextFrameKey = "artist"
-                                    ),
-                                    HandlerData(
-                                        contextFrameKey = "song"
-                                    )
-                                ),
-                                23
-                            )
-                        )
-                    )
-                ),
-                listOf(
-                    DataField(
-                        "artist",
-                        "Artist"
-                    ),
-                    DataField(
-                        "song",
-                        "Song"
-                    )
-                )
-            )
-            response = client.addEvent(songHandler).execute()
-            if (!response.isSuccessful) {
-                println("Failed to add song handler, error: " + response.errorBody()?.string())
-                exitProcess(1)
-            }
+            registerSongHandler(client)
         }
 
         fun registerClockHandler(client: ApiClient) {
@@ -161,6 +127,84 @@ class Main {
             if (!response.isSuccessful) {
                 println("Failed to add clock icon handler, error: " + response.errorBody()?.string())
                 exitProcess(1)
+            }
+        }
+
+        fun registerSongHandler(client: ApiClient) {
+            if(songInfoFlipEnabled) {
+                val songHandler = EventRegistration(
+                    GAME_NAME,
+                    SONG_EVENT,
+                    listOf(
+                        Handler(
+                            listOf(
+                                MultiLine(
+                                    listOf(
+                                        HandlerData(
+                                            contextFrameKey = "artist"
+                                        ),
+                                        HandlerData(
+                                            contextFrameKey = "song"
+                                        )
+                                    ),
+                                    23
+                                )
+                            )
+                        )
+                    ),
+                    listOf(
+                        DataField(
+                            "song",
+                            "Song"
+                        ),
+                        DataField(
+                            "artist",
+                            "Artist"
+                        )
+                    )
+                )
+                val response = client.addEvent(songHandler).execute()
+                if (!response.isSuccessful) {
+                    println("Failed to add song handler, error: " + response.errorBody()?.string())
+                    exitProcess(1)
+                }
+            } else {
+                val songHandler = EventRegistration(
+                    GAME_NAME,
+                    SONG_EVENT,
+                    listOf(
+                        Handler(
+                            listOf(
+                                MultiLine(
+                                    listOf(
+                                        HandlerData(
+                                            contextFrameKey = "song"
+                                        ),
+                                        HandlerData(
+                                            contextFrameKey = "artist"
+                                        )
+                                    ),
+                                    23
+                                )
+                            )
+                        )
+                    ),
+                    listOf(
+                        DataField(
+                            "song",
+                            "Song"
+                        ),
+                        DataField(
+                            "artist",
+                            "Artist"
+                        )
+                    )
+                )
+                val response = client.addEvent(songHandler).execute()
+                if (!response.isSuccessful) {
+                    println("Failed to add song handler, error: " + response.errorBody()?.string())
+                    exitProcess(1)
+                }
             }
         }
 

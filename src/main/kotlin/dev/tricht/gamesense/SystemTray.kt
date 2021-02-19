@@ -44,11 +44,19 @@ class SystemTray {
                 preferences.put("volume", menuItem.state.toString())
                 volumeEnabled = menuItem.state
             }
+            val songInfoFlip = CheckboxMenuItem("Flip song title and artist")
+            songInfoFlip.addItemListener {
+                val menuItem = it.source as CheckboxMenuItem
+                preferences.put("songInfoFlip", menuItem.state.toString())
+                songInfoFlipEnabled = menuItem.state
+                Main.registerSongHandler(client!!)
+            }
             volume.state = preferences.get("volume", "true").toBoolean()
             menu.add(title)
             menu.add(volume)
             menu.add(clock)
             menu.add(clockIcon)
+            menu.add(songInfoFlip)
             menu.add(tickRate)
             menu.add(exit)
             val trayIconImage = ImageIO.read(Main::class.java.classLoader.getResource("icon.png"))
