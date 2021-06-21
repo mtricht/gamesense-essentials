@@ -10,7 +10,11 @@ This programs adds the following to your SteelSeries OLED screen:
 [Download for Windows](https://github.com/mtricht/gamesense-essentials/releases/download/1.7.0/gamesense-essentials-1.7.0.msi)  
 
 ## Demo
-Video: https://streamable.com/7wnmt  
+
+
+https://user-images.githubusercontent.com/7511094/122837368-3e0fad00-d2f4-11eb-868e-980b2b29e1c1.mp4
+
+
 <img src="https://raw.githubusercontent.com/mtricht/gamesense-essentials/master/photos/clock.png" width="450" />  
 <img src="https://raw.githubusercontent.com/mtricht/gamesense-essentials/master/photos/volume.png" width="450" />
 
