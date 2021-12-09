@@ -4,11 +4,9 @@ import java.awt.*
 import java.awt.SystemTray
 import java.util.*
 import javax.imageio.ImageIO
-import javax.swing.JDialog
 import javax.swing.JFrame
 import javax.swing.JOptionPane
 import kotlin.system.exitProcess
-
 
 class SystemTray {
     companion object {

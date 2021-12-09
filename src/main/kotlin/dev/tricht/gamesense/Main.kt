@@ -1,15 +1,10 @@
 package dev.tricht.gamesense
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
+import dev.tricht.gamesense.com.steelseries.ApiClientFactory
 import dev.tricht.gamesense.com.steelseries.ApiClient
 import dev.tricht.gamesense.com.steelseries.model.*
-import dev.tricht.gamesense.events.DataFetcher
 import dev.tricht.gamesense.events.EventProducer
-import dev.tricht.gamesense.events.WindowsDataFetcher
-import retrofit2.Retrofit
-import retrofit2.converter.jackson.JacksonConverterFactory
-import java.io.File
 import java.util.*
 import java.util.prefs.Preferences
 import kotlin.system.exitProcess
@@ -21,7 +16,6 @@ const val VOLUME_EVENT = "VOLUME"
 const val SONG_EVENT = "SONG"
 var timer = Timer()
 var client: ApiClient? = null
-var dataFetcher: DataFetcher? = null
 var preferences: Preferences = Preferences.userNodeForPackage(Main::class.java)
 var clockEnabled = preferences.get("clock", "true").toBoolean()
 var clockIconEnabled = preferences.get("clockIcon", "true")!!.toBoolean()
@@ -30,40 +24,13 @@ var songInfoFlipEnabled = preferences.get("songInfoFlip", "false").toBoolean()
 
 fun main() {
     SystemTray.setup()
-    var connected = false
-    while (!connected) {
-        try {
-            val address = Main.getGamesenseAddress()
-            client = Main.buildClient(address)
-            client?.ping()?.execute()
-            connected = true
-        } catch (e: Exception) {
-            println("Failed to register app, steelseries engine probably not running? Retrying in 5 seconds")
-            Thread.sleep(5000)
-        }
-    }
+    client = ApiClientFactory().createApiClient()
     Main.registerHandlers(client!!)
-    dataFetcher = WindowsDataFetcher()
     Main.startTimer()
 }
 
 class Main {
     companion object {
-        fun buildClient(address: String): ApiClient {
-            val retrofit = Retrofit.Builder()
-                .baseUrl("http://$address")
-                .addConverterFactory(JacksonConverterFactory.create(mapper))
-                .build()
-            return retrofit.create(ApiClient::class.java)
-        }
-
-        fun getGamesenseAddress(): String {
-            val path = System.getenv("PROGRAMDATA") + "\\SteelSeries\\SteelSeries Engine 3\\coreProps.json"
-            val json = File(path).readText(Charsets.UTF_8)
-            val props: Props = mapper.readValue(json)
-            return props.address
-        }
-
         fun registerHandlers(client: ApiClient) {
             registerClockHandler(client)
             val volumeHandler = EventRegistration(
@@ -91,7 +58,7 @@ class Main {
                     )
                 )
             )
-            var response = client.addEvent(volumeHandler).execute()
+            val response = client.addEvent(volumeHandler).execute()
             if (!response.isSuccessful) {
                 println("Failed to add volume handler, error: " + response.errorBody()?.string())
                 exitProcess(1)
@@ -199,7 +166,7 @@ class Main {
         }
 
         fun startTimer() {
-            timer.schedule(EventProducer(client!!, dataFetcher!!), 0, Tick.tickRateInMs())
+            timer.schedule(EventProducer(), 0, Tick.tickRateInMs())
         }
     }
 }

@@ -1,24 +1,32 @@
 package dev.tricht.gamesense.events
 
 import dev.tricht.gamesense.*
-import dev.tricht.gamesense.com.steelseries.ApiClient
+import dev.tricht.gamesense.com.steelseries.ApiClientFactory
 import dev.tricht.gamesense.com.steelseries.model.Data
 import dev.tricht.gamesense.com.steelseries.model.Event
 import dev.tricht.gamesense.com.steelseries.model.Frame
 import dev.tricht.gamesense.model.SongInformation
+import java.net.ConnectException
 import java.text.DateFormat
 import java.util.*
 
-class EventProducer(
-    private val client: ApiClient,
-    private val dataFetcher: DataFetcher
- ) : TimerTask() {
+class EventProducer: TimerTask() {
+    private val dataFetcher = WindowsDataFetcher()
+    private var client = ApiClientFactory().createApiClient()
     private val dateFormat = DateFormat.getTimeInstance()
     private var volume: Int? = null
     private var waitTicks = 0
     private var currentSong: SongInformation? = null
 
     override fun run() {
+        try {
+            handleTick()
+        } catch (e: ConnectException) {
+            client = ApiClientFactory().createApiClient()
+        }
+    }
+
+    private fun handleTick() {
         val oldVolume = this.volume
         this.volume = dataFetcher.getVolume()
         if (oldVolume != null && this.volume != oldVolume) {
