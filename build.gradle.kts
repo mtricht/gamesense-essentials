@@ -4,7 +4,7 @@ import org.apache.tools.ant.taskdefs.condition.Os
 plugins {
     kotlin("jvm") version "1.3.70"
     java
-    id("org.beryx.runtime") version "1.8.0"
+    id("org.beryx.runtime") version "1.12.7"
 }
 
 group = "dev.tricht.gamesense"
@@ -65,19 +65,18 @@ runtime {
     options.set(listOf("--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages"))
     modules.set(listOf("java.desktop", "java.logging", "java.datatransfer", "jdk.localedata"))
     jpackage {
-        if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-            imageOptions.addAll(listOf("--icon", "src/main/resources/icon.ico"))
-            installerOptions.addAll(
-                listOf(
-                    "--win-per-user-install",
-                    "--win-dir-chooser",
-                    "--win-menu",
-                    "--win-shortcut"
-                )
+        imageOptions.addAll(listOf("--icon", "src/main/resources/icon.ico"))
+        installerOptions.addAll(
+            listOf(
+                "--win-per-user-install",
+                "--win-dir-chooser",
+                "--win-menu",
+                "--win-shortcut"
             )
-        } else {
-            imageOptions.addAll(listOf("--icon", "src/main/resources/icon.icns"))
-        }
+        )
+    }
+    launcher {
+        jvmArgs = listOf("-Djava.locale.providers=HOST")
     }
 }
 
