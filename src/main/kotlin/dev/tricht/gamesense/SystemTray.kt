@@ -4,12 +4,16 @@ import java.awt.*
 import java.awt.SystemTray
 import java.util.*
 import javax.imageio.ImageIO
+import javax.swing.JDialog
+import javax.swing.JFrame
 import javax.swing.JOptionPane
 import kotlin.system.exitProcess
 
 
 class SystemTray {
     companion object {
+        var tickRateOptionPaneIsOpen = false
+
         fun setup() {
             if (!SystemTray.isSupported()) {
                 ErrorUtil.showErrorDialogAndExit("System is not supported.");
@@ -67,10 +71,18 @@ class SystemTray {
         }
 
         private fun changeTickRate() {
+            if (tickRateOptionPaneIsOpen) {
+                return
+            }
+            tickRateOptionPaneIsOpen = true
+            val frame = JFrame()
+            frame.isAlwaysOnTop = true
             val newTickRate = JOptionPane.showInputDialog(
+                frame,
                 "Tick rate in milliseconds. Lower means faster updates on the OLED screen but more CPU usage",
                 Tick.tickRateInMs()
             )
+            tickRateOptionPaneIsOpen = false
             if (newTickRate == null) {
                 return
             }
