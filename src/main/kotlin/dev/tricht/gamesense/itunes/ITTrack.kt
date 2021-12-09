@@ -1,7 +1,6 @@
 package dev.tricht.gamesense.itunes
 
 import com.jacob.com.Dispatch
-import dev.tricht.gamesense.itunes.ITObject
 
 class ITTrack(d: Dispatch?) : ITObject(d) {
     var artist: String?

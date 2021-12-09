@@ -2,12 +2,10 @@ package dev.tricht.gamesense
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.sun.jna.Platform
 import dev.tricht.gamesense.com.steelseries.ApiClient
 import dev.tricht.gamesense.com.steelseries.model.*
 import dev.tricht.gamesense.events.DataFetcher
 import dev.tricht.gamesense.events.EventProducer
-import dev.tricht.gamesense.events.MacOSDataFetcher
 import dev.tricht.gamesense.events.WindowsDataFetcher
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
@@ -45,11 +43,7 @@ fun main() {
         }
     }
     Main.registerHandlers(client!!)
-    dataFetcher = if (Platform.isWindows()) {
-        WindowsDataFetcher()
-    } else {
-        MacOSDataFetcher()
-    }
+    dataFetcher = WindowsDataFetcher()
     Main.startTimer()
 }
 
@@ -64,11 +58,7 @@ class Main {
         }
 
         fun getGamesenseAddress(): String {
-            val path = if (Platform.isWindows()) {
-                "C:\\ProgramData\\SteelSeries\\SteelSeries Engine 3\\coreProps.json"
-            } else {
-                "/Library/Application Support/SteelSeries Engine 3/coreProps.json"
-            }
+            val path = "C:\\ProgramData\\SteelSeries\\SteelSeries Engine 3\\coreProps.json"
             val json = File(path).readText(Charsets.UTF_8)
             val props: Props = mapper.readValue(json)
             return props.address

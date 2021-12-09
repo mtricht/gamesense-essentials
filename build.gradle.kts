@@ -61,7 +61,6 @@ application {
 
 // TODO: Use github actions...
 // Windows: export JAVA_HOME="C:\\Program Files\\AdoptOpenJDK\\jdk-14.0.1.7-hotspot\\"
-// MacOS: sdk use java 14.0.2.hs-adpt
 runtime {
     options.set(listOf("--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages"))
     modules.set(listOf("java.desktop", "java.logging", "java.datatransfer", "jdk.localedata"))
