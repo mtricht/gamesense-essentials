@@ -12,7 +12,7 @@ This programs adds the following to your SteelSeries OLED screen:
   - AIMP 
   - YouTube Music Desktop App
 
-[Download for Windows](https://github.com/mtricht/gamesense-essentials/releases/download/1.7.0/gamesense-essentials-1.7.0.msi)  
+[Download for Windows](https://github.com/mtricht/gamesense-essentials/releases/download/1.8.0/gamesense-essentials-1.8.0.msi)  
 
 ## Demo
 https://user-images.githubusercontent.com/7511094/122837368-3e0fad00-d2f4-11eb-868e-980b2b29e1c1.mp4
