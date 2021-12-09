@@ -58,7 +58,7 @@ class Main {
         }
 
         fun getGamesenseAddress(): String {
-            val path = "C:\\ProgramData\\SteelSeries\\SteelSeries Engine 3\\coreProps.json"
+            val path = System.getenv("PROGRAMDATA") + "\\SteelSeries\\SteelSeries Engine 3\\coreProps.json"
             val json = File(path).readText(Charsets.UTF_8)
             val props: Props = mapper.readValue(json)
             return props.address
