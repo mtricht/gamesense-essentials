@@ -1,6 +1,8 @@
 # gamesense-essentials
 Essential OLED integrations for SteelSeries Gamesense.
 
+After 2 years I no longer own a steelseries keyboard. If any issues arises from using this I will no longer be able to troubleshoot it.
+
 This programs adds the following to your SteelSeries OLED screen:
 
 - A clock
