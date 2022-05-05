@@ -12,10 +12,10 @@ This programs adds the following to your SteelSeries OLED screen:
 - Displaying current artist and song for:
   - Spotify
   - iTunes
-  - MusicBee
-  - AIMP 
-  - YouTube Music Desktop App
-  - foobar2000 (use this [plugin](https://skipyrich.com/wiki/Foobar2000:Now_Playing_Simple) and point the file to `C:\Users\<YourName>\foobar_np.txt`)
+  - [MusicBee](https://getmusicbee.com/)
+  - [AIMP](https://www.aimp.ru/) 
+  - [YouTube Music Desktop App](https://ytmdesktop.app/)
+  - [foobar2000](https://www.foobar2000.org/) (use this [plugin](https://skipyrich.com/wiki/Foobar2000:Now_Playing_Simple) and point the file to `C:\Users\<YourName>\foobar_np.txt`)
 
 [Download for Windows](https://github.com/mtricht/gamesense-essentials/releases/download/1.8.0/gamesense-essentials-1.8.0.msi)  
 
