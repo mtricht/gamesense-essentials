@@ -1,5 +1,4 @@
 import org.gradle.jvm.tasks.Jar
-import org.apache.tools.ant.taskdefs.condition.Os
 
 plugins {
     kotlin("jvm") version "1.6.21"
@@ -27,7 +26,7 @@ dependencies {
 tasks {
     compileKotlin {
         kotlinOptions.jvmTarget = "17"
-    }:
+    }
     compileTestKotlin {
         kotlinOptions.jvmTarget = "17"
     }
@@ -60,7 +59,6 @@ application {
 }
 
 // TODO: Use github actions...
-// Windows: export JAVA_HOME="C:\\Program Files\\AdoptOpenJDK\\jdk-14.0.1.7-hotspot\\"
 runtime {
     options.set(listOf("--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages"))
     modules.set(listOf("java.desktop", "java.logging", "java.datatransfer", "jdk.localedata"))

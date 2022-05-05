@@ -14,6 +14,7 @@ import com.sun.jna.ptr.IntByReference
 import dev.tricht.gamesense.SoundUtil
 import dev.tricht.gamesense.Tick
 import dev.tricht.gamesense.itunes.ITTrack
+import java.io.File
 import kotlin.math.roundToInt
 
 class WindowsDataFetcher() : DataFetcher {
@@ -38,15 +39,11 @@ class WindowsDataFetcher() : DataFetcher {
     }
 
     override fun getCurrentSong(): String? {
-        val potentialSong = getPotentialSong()
-        if (potentialSong != "") {
-            return potentialSong
-        }
-        val iTunesSong = getiTunesSongName()
-        if (iTunesSong != "") {
-            return iTunesSong
-        }
-        return null
+        return arrayOf(
+            getPotentialSong(),
+            getiTunesSongName(),
+            getFoobarSongName()
+        ).firstOrNull(String::isNotBlank)
     }
 
     private fun getPotentialSong(): String {
@@ -111,6 +108,18 @@ class WindowsDataFetcher() : DataFetcher {
             iTunes = null
         }
         return song
+    }
+
+    private fun getFoobarSongName(): String {
+        val nowPlayingFile = File(System.getenv("HOMEDRIVE") + System.getenv("HOMEPATH") + "\\foobar_np.txt")
+        if (!nowPlayingFile.exists()) {
+            return ""
+        }
+        val text = nowPlayingFile.readText(Charsets.UTF_8)
+        if (!text.contains("playing: ")) {
+            return ""
+        }
+        return text.replace("playing: ", "")
     }
 
 }
