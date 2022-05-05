@@ -7,9 +7,9 @@ After 2 years I no longer own a steelseries keyboard. If any issues arises from 
 
 This programs adds the following to your SteelSeries OLED screen:
 
-- A clock
-- Volume slider when changing
-- Displaying current artist and song for:
+- Clock
+- Volume slider
+- Now playing artist and song for:
   - Spotify
   - iTunes
   - [MusicBee](https://getmusicbee.com/)
