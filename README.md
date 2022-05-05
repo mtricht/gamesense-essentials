@@ -1,4 +1,6 @@
 # gamesense-essentials
+[![Downloads](https://img.shields.io/github/downloads/mtricht/gamesense-essentials/total.svg)](https://github.com/mtricht/gamesense-essentials/releases)
+
 Essential OLED integrations for SteelSeries Gamesense.
 
 After 2 years I no longer own a steelseries keyboard. If any issues arises from using this I will no longer be able to troubleshoot it.
