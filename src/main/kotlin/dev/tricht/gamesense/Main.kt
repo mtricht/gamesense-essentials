@@ -1,8 +1,8 @@
 package dev.tricht.gamesense
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import dev.tricht.gamesense.com.steelseries.ApiClientFactory
 import dev.tricht.gamesense.com.steelseries.ApiClient
+import dev.tricht.gamesense.com.steelseries.ApiClientFactory
 import dev.tricht.gamesense.com.steelseries.model.*
 import dev.tricht.gamesense.events.EventProducer
 import java.util.*

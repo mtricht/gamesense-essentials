@@ -32,7 +32,6 @@ class WindowsDataFetcher() : DataFetcher {
     override fun getVolume(): Int {
         if (masterVolumeTimeout == 25) {
             masterVolumeTimeout = 0
-            SoundUtil.Initialize()
         }
         masterVolumeTimeout++
         return (SoundUtil.getMasterVolumeLevel() * 100).roundToInt()
