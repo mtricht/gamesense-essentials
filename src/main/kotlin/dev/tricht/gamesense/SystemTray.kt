@@ -10,7 +10,7 @@ import kotlin.system.exitProcess
 
 class SystemTray {
     companion object {
-        var tickRateOptionPaneIsOpen = false
+        private var tickRateOptionPaneIsOpen = false
 
         fun setup() {
             if (!SystemTray.isSupported()) {
@@ -25,47 +25,42 @@ class SystemTray {
             exit.addActionListener { exitProcess(0) }
             val tickRate = MenuItem("Change tick rate")
             tickRate.addActionListener { changeTickRate() }
-            val clock = CheckboxMenuItem("Enable clock")
-            clock.addItemListener {
-                val menuItem = it.source as CheckboxMenuItem
-                preferences.put("clock", menuItem.state.toString())
-                clockEnabled = menuItem.state
-            }
-            clock.state = preferences.get("clock", "true").toBoolean()
-            val clockIcon = CheckboxMenuItem("Enable clock icon")
-            clockIcon.addItemListener {
-                val menuItem = it.source as CheckboxMenuItem
-                preferences.put("clockIcon", menuItem.state.toString())
-                clockIconEnabled = menuItem.state
-                Main.registerClockHandler(client!!)
-            }
-            clockIcon.state = preferences.get("clockIcon", "true")!!.toBoolean()
-            val volume = CheckboxMenuItem("Enable volume slider")
-            volume.addItemListener {
-                val menuItem = it.source as CheckboxMenuItem
-                preferences.put("volume", menuItem.state.toString())
-                volumeEnabled = menuItem.state
-            }
-            val songInfoFlip = CheckboxMenuItem("Flip song title and artist")
-            songInfoFlip.addItemListener {
-                val menuItem = it.source as CheckboxMenuItem
-                preferences.put("songInfoFlip", menuItem.state.toString())
-                songInfoFlipEnabled = menuItem.state
-                Main.registerSongHandler(client!!)
-            }
-            volume.state = preferences.get("volume", "true").toBoolean()
-            menu.add(title)
-            menu.add(volume)
-            menu.add(clock)
-            menu.add(clockIcon)
-            menu.add(songInfoFlip)
-            menu.add(tickRate)
-            menu.add(exit)
+            listOf(
+                title,
+                createSettingMenuItem("Enable clock", "clock"),
+                createSettingMenuItem("Enable clock icon", "clockIcon"),
+                createSettingMenuItem("Display clock periodically", "clockPeriodically", false),
+                createSettingMenuItem("Enable volume slider", "volume"),
+                createSettingMenuItem("Enable song information", "songInfo"),
+                createSettingMenuItem("Flip song title and artist", "songInfoFlip", false),
+                tickRate,
+                exit
+            ).forEach(menu::add)
             val trayIconImage = ImageIO.read(Main::class.java.classLoader.getResource("icon.png"))
             val trayIconWidth = TrayIcon(trayIconImage).size.width
             val icon = TrayIcon(trayIconImage.getScaledInstance(trayIconWidth, -1, Image.SCALE_SMOOTH))
             icon.popupMenu = menu
             tray.add(icon)
+        }
+
+        private fun createSettingMenuItem(
+            description: String,
+            setting: String,
+            default: Boolean = true
+        ): CheckboxMenuItem {
+            val settingMenuItem = CheckboxMenuItem(description)
+            settingMenuItem.addItemListener {
+                val menuItem = it.source as CheckboxMenuItem
+                preferences.put(setting, menuItem.state.toString())
+                if (setting == "clockIcon") {
+                    Main.registerClockHandler(client!!)
+                }
+                if (setting == "songInfoFlip") {
+                    Main.registerSongHandler(client!!)
+                }
+            }
+            settingMenuItem.state = preferences.get(setting, default.toString()).toBoolean()
+            return settingMenuItem
         }
 
         private fun changeTickRate() {
@@ -95,7 +90,7 @@ class SystemTray {
                 Tick.refreshCache()
                 timer = Timer()
                 Main.startTimer()
-            } catch (e: Exception) {
+            } catch (_: Exception) {
             }
         }
     }

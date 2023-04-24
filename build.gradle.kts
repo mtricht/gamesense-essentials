@@ -1,9 +1,9 @@
 import org.gradle.jvm.tasks.Jar
 
 plugins {
-    kotlin("jvm") version "1.6.21"
+    kotlin("jvm") version "1.8.20"
     java
-    id("org.beryx.runtime") version "1.12.7"
+    id("org.beryx.runtime") version "1.13.0"
 }
 
 group = "dev.tricht.gamesense"
@@ -15,19 +15,16 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.+")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.+")
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-jackson:2.9.0")
-    implementation("net.java.dev.jna:jna:5.12.1")
-    implementation("net.java.dev.jna:jna-platform:5.12.1")
+    implementation("net.java.dev.jna:jna:5.13.0")
+    implementation("net.java.dev.jna:jna-platform:5.13.0")
     implementation("com.hynnet:jacob:1.18")
 }
 
 tasks {
     compileKotlin {
-        kotlinOptions.jvmTarget = "17"
-    }
-    compileTestKotlin {
         kotlinOptions.jvmTarget = "17"
     }
 }

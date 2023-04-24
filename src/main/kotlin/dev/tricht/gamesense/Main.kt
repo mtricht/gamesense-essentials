@@ -17,10 +17,6 @@ const val SONG_EVENT = "SONG"
 var timer = Timer()
 var client: ApiClient? = null
 var preferences: Preferences = Preferences.userNodeForPackage(Main::class.java)
-var clockEnabled = preferences.get("clock", "true").toBoolean()
-var clockIconEnabled = preferences.get("clockIcon", "true")!!.toBoolean()
-var volumeEnabled = preferences.get("volume", "true").toBoolean()
-var songInfoFlipEnabled = preferences.get("songInfoFlip", "false").toBoolean()
 
 fun main() {
     SystemTray.setup()
@@ -74,7 +70,7 @@ class Main {
                     Handler(
                         listOf(
                             HandlerData(
-                                iconId = if (clockIconEnabled) 15 else 0
+                                iconId = if (preferences.get("clockIcon", "true")!!.toBoolean()) 15 else 0
                             )
                         )
                     )
@@ -88,7 +84,7 @@ class Main {
         }
 
         fun registerSongHandler(client: ApiClient) {
-            if(songInfoFlipEnabled) {
+            if (preferences.get("songInfoFlip", "false").toBoolean()) {
                 val songHandler = EventRegistration(
                     GAME_NAME,
                     SONG_EVENT,

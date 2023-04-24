@@ -10,12 +10,13 @@ import java.net.ConnectException
 import java.text.DateFormat
 import java.util.*
 
-class EventProducer: TimerTask() {
+class EventProducer : TimerTask() {
     private val dataFetcher = WindowsDataFetcher()
     private var client = ApiClientFactory().createApiClient()
     private val dateFormat = DateFormat.getTimeInstance(0)
     private var volume: Int? = null
     private var waitTicks = 0
+    private var displayClockPeriodically = 0
     private var currentSong: SongInformation? = null
 
     override fun run() {
@@ -33,12 +34,21 @@ class EventProducer: TimerTask() {
             sendVolumeEvent()
             return
         }
+        if (displayClockPeriodically > 0) {
+            --displayClockPeriodically
+        }
         if (waitTicks > 0) {
             --waitTicks
             return
         }
+        if (preferences.get("clockPeriodically", "false").toBoolean() && displayClockPeriodically == 0) {
+            sendClockEvent()
+            displayClockPeriodically = Tick.msToTicks(10000)
+            waitTicks = Tick.msToTicks(2000)
+            return
+        }
         val potentialSong = dataFetcher.getCurrentSong()
-        if (potentialSong != null && potentialSong != "") {
+        if (preferences.get("songInfo", "true").toBoolean() && potentialSong != null && potentialSong != "") {
             if (currentSong == null || potentialSong != currentSong!!.fullSongName) {
                 currentSong = SongInformation(potentialSong)
             }
@@ -49,7 +59,7 @@ class EventProducer: TimerTask() {
     }
 
     private fun sendClockEvent() {
-        if (!clockEnabled) {
+        if (!preferences.get("clock", "true").toBoolean()) {
             return
         }
         client.sendEvent(
@@ -84,7 +94,7 @@ class EventProducer: TimerTask() {
     }
 
     private fun sendVolumeEvent() {
-        if (this.volume == null || !volumeEnabled) {
+        if (this.volume == null || !preferences.get("volume", "true").toBoolean()) {
             return
         }
         waitTicks = Tick.msToTicks(1000)
