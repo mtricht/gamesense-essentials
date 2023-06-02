@@ -1,27 +1,70 @@
-::-moz-selection {
-  background: #42a5f5 !important;
+body {
+  max-width: 750px;
+  color: #fff;
+  font-family: sans-serif
 }
 
-::selection {
-  background: #42a5f5 !important;
+a,
+a:visited {
+  color: #7fffd4
 }
 
-html.dark a, a:hover {
-  color: #42a5f5;
-  text-decoration: none;
-  border-bottom: 0px;
+a:hover {
+  color: #7fffd4;
+  text-decoration: underline;
+  border-bottom: 0
 }
 
-.site-description a {
-  color: #42a5f5 !important;
-  text-decoration: none !important;
-  border-bottom: 0px !important;
+header {
+  display: flex;
+  justify-content: space-between
 }
 
-.header nav li a svg {
-  max-height: 18px;
+header div {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end
 }
 
-.footer {
-  display: none;
+#title {
+  margin-top: 0;
+  margin-bottom: 0
+}
+
+#title a {
+  color: #fff
+}
+
+#posts {
+  list-style: none;
+  padding-left: 0
+}
+
+h1 {
+  margin-top: 0;
+  margin-bottom: 5px
+}
+
+p {
+  margin-bottom: 5px
+}
+
+#theme-toggle {
+  width: 18px;
+  margin-left: 5px;
+  cursor: pointer
+}
+
+#post-header {
+  margin-bottom: 15px
+}
+
+button {
+  background-color: #7fffd4;
+  color: #000;
+  border: 0px;
+}
+
+button:hover {
+  background-color: #65cca9 !important;
 }
