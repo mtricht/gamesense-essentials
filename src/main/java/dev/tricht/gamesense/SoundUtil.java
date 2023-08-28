@@ -13,6 +13,7 @@ import static com.sun.jna.platform.win32.WTypes.CLSCTX_INPROC_SERVER;
 
 /**
  * Source: https://github.com/serezhka/clickerbot/blob/master/src/main/java/com/github/serezhka/clickerbot/jna/SoundUtil.java
+ *
  * @author Sergei Fedorov (serezhka@xakep.ru)
  */
 public class SoundUtil {
@@ -28,6 +29,8 @@ public class SoundUtil {
 
     private static Function GetMasterVolumeLevel;
 
+    private static boolean initialized = false;
+
     static {
         if (!WinNT.S_OK.equals(Ole32.INSTANCE.CoInitialize(null))) {
             throw new RuntimeException("Ole32::CoInitialize() failed");
@@ -42,7 +45,7 @@ public class SoundUtil {
         }
     }
 
-    public static void Initialize() {
+    private static void Initialize() {
         Pointer MMDeviceEnumeratorPointer = MMDeviceEnumerator.getValue();
         Pointer MMDeviceEnumeratorVirtualTable = MMDeviceEnumeratorPointer.getPointer(0);
 
@@ -68,6 +71,7 @@ public class SoundUtil {
             throw new RuntimeException("IMMDevice::Activate( AudioEndpointVolume ) failed");
         }
         GetMasterVolumeLevel = GetMasterVolumeLevelFunction();
+        initialized = true;
     }
 
     private static Function GetMasterVolumeLevelFunction() {
@@ -82,10 +86,18 @@ public class SoundUtil {
      * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/dd370930">msdn</a>
      */
     public static float getMasterVolumeLevel() {
-        FloatByReference resultPointer = new FloatByReference();
-        if (!WinNT.S_OK.equals(GetMasterVolumeLevel.invoke(WinNT.HRESULT.class, new Object[]{AudioEndpointVolume.getValue(), resultPointer}))) {
-            throw new RuntimeException("IAudioEndpointVolume::GetMasterVolumeLevel() failed");
+        try {
+            if (!initialized) {
+                Initialize();
+            }
+            FloatByReference resultPointer = new FloatByReference();
+            if (!WinNT.S_OK.equals(GetMasterVolumeLevel.invoke(WinNT.HRESULT.class, new Object[]{AudioEndpointVolume.getValue(), resultPointer}))) {
+                throw new RuntimeException("IAudioEndpointVolume::GetMasterVolumeLevel() failed");
+            }
+            return Math.round(resultPointer.getValue() * 100.0) / 100.0f;
+        } catch (Exception e) {
+            initialized = false;
+            return 0;
         }
-        return Math.round(resultPointer.getValue() * 100.0) / 100.0f;
     }
 }

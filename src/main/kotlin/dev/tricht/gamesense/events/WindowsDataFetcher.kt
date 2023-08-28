@@ -25,10 +25,6 @@ class WindowsDataFetcher() : DataFetcher {
     private var masterVolumeTimeout = 0
     private val players = "(Spotify|MusicBee|AIMP|YouTube Music Desktop App).exe".toRegex()
 
-    init {
-        SoundUtil.Initialize()
-    }
-
     override fun getVolume(): Int {
         if (masterVolumeTimeout == 25) {
             masterVolumeTimeout = 0
