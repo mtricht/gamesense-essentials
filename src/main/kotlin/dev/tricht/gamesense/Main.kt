@@ -100,7 +100,7 @@ class Main {
                                             contextFrameKey = "song"
                                         )
                                     ),
-                                    23
+                                    if (preferences.get("songIcon", "true")!!.toBoolean()) 23 else 0
                                 )
                             )
                         )
@@ -137,7 +137,7 @@ class Main {
                                             contextFrameKey = "artist"
                                         )
                                     ),
-                                    23
+                                    if (preferences.get("songIcon", "true")!!.toBoolean()) 23 else 0
                                 )
                             )
                         )
