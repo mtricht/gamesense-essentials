@@ -13,7 +13,7 @@ import java.util.*
 class EventProducer : TimerTask() {
     private val dataFetcher = WindowsDataFetcher()
     private var client = ApiClientFactory().createApiClient()
-    private val dateFormat = DateFormat.getTimeInstance(0)
+    private val dateFormat = DateFormat.getTimeInstance()
     private var volume: Int? = null
     private var waitTicks = 0
     private var displayClockPeriodically = 0
