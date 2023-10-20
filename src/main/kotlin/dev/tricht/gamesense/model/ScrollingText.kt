@@ -7,7 +7,7 @@ var preferences: Preferences = Preferences.userNodeForPackage(ScrollingText::cla
 
 data class ScrollingText(
     var _text: String,
-    var MAX_DISPLAY_TEXT_LENGTH: Int = if (preferences.get("songIcon", "true")!!.toBoolean()) 12 else 21
+    var maxDisplayLength: Int = if (preferences.get("songIcon", "true")!!.toBoolean()) 12 else 21
 ) {
 
     var text = _text
@@ -31,14 +31,14 @@ data class ScrollingText(
     private var originalText = _text
 
     init {
-        if (_text.length > MAX_DISPLAY_TEXT_LENGTH) {
+        if (_text.length > maxDisplayLength) {
             text = "$_text | "
             originalText = "$_text "
         }
     }
 
     private fun marquify(text: String): String {
-        if (text.length <= MAX_DISPLAY_TEXT_LENGTH) {
+        if (text.length <= maxDisplayLength) {
             return text
         }
         return text.substring(1) + text[0]
