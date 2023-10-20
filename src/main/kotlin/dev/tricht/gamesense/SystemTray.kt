@@ -56,7 +56,7 @@ class SystemTray {
                 if (setting == "clockIcon") {
                     Main.registerClockHandler(client!!)
                 }
-                if (setting == "songInfoFlip") {
+                if (setting == "songInfoFlip" || setting == "songIcon") {
                     Main.registerSongHandler(client!!)
                 }
             }
