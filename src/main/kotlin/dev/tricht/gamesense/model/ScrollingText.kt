@@ -1,6 +1,5 @@
 package dev.tricht.gamesense.model
 
-import dev.tricht.gamesense.Main
 import dev.tricht.gamesense.Tick
 import java.util.prefs.Preferences
 
