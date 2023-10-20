@@ -8,7 +8,7 @@ var preferences: Preferences = Preferences.userNodeForPackage(ScrollingText::cla
 
 data class ScrollingText(
     var _text: String,
-    var MAX_DISPLAY_TEXT_LENGTH: Int = if (preferences.get("clockIcon", "true")!!.toBoolean()) 21 else 12
+    var MAX_DISPLAY_TEXT_LENGTH: Int = if (preferences.get("songIcon", "true")!!.toBoolean()) 21 else 12
 ) {
 
     var text = _text
