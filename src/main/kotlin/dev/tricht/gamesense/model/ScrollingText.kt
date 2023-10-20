@@ -1,13 +1,10 @@
 package dev.tricht.gamesense.model
 
 import dev.tricht.gamesense.Tick
-import java.util.prefs.Preferences
-
-var preferences: Preferences = Preferences.userNodeForPackage(ScrollingText::class.java)
+import dev.tricht.gamesense.preferences
 
 data class ScrollingText(
-    var _text: String,
-    var maxDisplayLength: Int = if (preferences.get("songIcon", "true")!!.toBoolean()) 12 else 21
+    var _text: String
 ) {
 
     var text = _text
@@ -31,16 +28,24 @@ data class ScrollingText(
     private var originalText = _text
 
     init {
-        if (_text.length > maxDisplayLength) {
-            text = "$_text | "
+        if (_text.length > getMaxDisplayLength()) {
+            text = "$_text " + getSongSeparator()
             originalText = "$_text "
         }
     }
 
     private fun marquify(text: String): String {
-        if (text.length <= maxDisplayLength) {
+        if (text.length <= getMaxDisplayLength()) {
             return text
         }
         return text.substring(1) + text[0]
+    }
+
+    private fun getMaxDisplayLength(): Int {
+        return if (preferences.get("songIcon", "true")!!.toBoolean()) 12 else 21
+    }
+
+    private fun getSongSeparator(): String {
+        return if (preferences.get("songSeparator", "false")!!.toBoolean()) "| " else ""
     }
 }

@@ -34,6 +34,7 @@ class SystemTray {
                 createSettingMenuItem("Enable song information", "songInfo"),
                 createSettingMenuItem("Enable song icon", "songIcon"),
                 createSettingMenuItem("Flip song title and artist", "songInfoFlip", false),
+                createSettingMenuItem("Display song scrolling separator", "songSeparator", false),
                 tickRate,
                 exit
             ).forEach(menu::add)
@@ -58,6 +59,12 @@ class SystemTray {
                 }
                 if (setting == "songInfoFlip" || setting == "songIcon") {
                     Main.registerSongHandler(client!!)
+                }
+                if (setting == "songSeparator") {
+                    timer.cancel()
+                    timer.purge()
+                    timer = Timer()
+                    Main.startTimer()
                 }
             }
             settingMenuItem.state = preferences.get(setting, default.toString()).toBoolean()
