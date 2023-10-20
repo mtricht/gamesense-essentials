@@ -32,6 +32,7 @@ class SystemTray {
                 createSettingMenuItem("Display clock periodically", "clockPeriodically", false),
                 createSettingMenuItem("Enable volume slider", "volume"),
                 createSettingMenuItem("Enable song information", "songInfo"),
+                createSettingMenuItem("Enable song icon", "songIcon"),
                 createSettingMenuItem("Flip song title and artist", "songInfoFlip", false),
                 tickRate,
                 exit

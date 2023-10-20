@@ -1,14 +1,15 @@
 package dev.tricht.gamesense.model
 
+import dev.tricht.gamesense.Main
 import dev.tricht.gamesense.Tick
+import java.util.prefs.Preferences
+
+var preferences: Preferences = Preferences.userNodeForPackage(ScrollingText::class.java)
 
 data class ScrollingText(
-    var _text: String
+    var _text: String,
+    var MAX_DISPLAY_TEXT_LENGTH: Int = if (preferences.get("songIcon", "true")!!.toBoolean()) 12 else 21
 ) {
-
-    companion object {
-        const val MAX_DISPLAY_TEXT_LENGTH = 12
-    }
 
     var text = _text
     get() {
@@ -31,8 +32,8 @@ data class ScrollingText(
     private var originalText = _text
 
     init {
-        if (_text.length >= MAX_DISPLAY_TEXT_LENGTH) {
-            text = "$_text "
+        if (_text.length > MAX_DISPLAY_TEXT_LENGTH) {
+            text = "$_text | "
             originalText = "$_text "
         }
     }
