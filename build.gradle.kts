@@ -6,7 +6,7 @@ plugins {
     id("org.beryx.runtime") version "1.13.1"
 }
 
-group = "dev.tricht.gamesense"
+group = "eu.tricht.gamesense"
 version = "1.12.0"
 
 repositories {
@@ -40,7 +40,7 @@ val fatJar = task("fatJar", type = Jar::class) {
     manifest {
         attributes["Implementation-Title"] = "Gamesense Essentials"
         attributes["Implementation-Version"] = archiveVersion
-        attributes["Main-Class"] = "dev.tricht.gamesense.MainKt"
+        attributes["Main-Class"] = "eu.tricht.gamesense.MainKt"
     }
     from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
     with(tasks.jar.get() as CopySpec)
@@ -53,7 +53,7 @@ tasks {
 }
 
 application {
-    mainClass.set("dev.tricht.gamesense.MainKt")
+    mainClass.set("eu.tricht.gamesense.MainKt")
 }
 
 // TODO: Use github actions...
