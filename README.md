@@ -22,9 +22,3 @@ https://user-images.githubusercontent.com/7511094/122837368-3e0fad00-d2f4-11eb-8
 
 ## Run on windows startup
 To run after boot, create a shortcut to gamesense-essentials inside the "Startup" folder. Follow this [tutorial](https://www.howtogeek.com/208224/how-to-add-a-program-to-startup-in-windows/) if you're having trouble.
-
-## Tick rate
-Starting with v1.3.0, the tick rate/delay is now configurable through the system tray icon. This value determines how many times per second the OLED screen is updated.
-The default on windows is 50 milliseconds.
-
-This is because the lower the number, the higher the CPU usage will be. For my 8-core gaming desktop, 50 milliseconds is barely noticeable, but for my laptop, 50 milliseconds is way too fast and the CPU fans will go crazy.   
