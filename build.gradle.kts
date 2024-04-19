@@ -35,7 +35,7 @@ java {
 }
 
 val fatJar = task("fatJar", type = Jar::class) {
-    baseName = "${project.name}-fat"
+    archiveBaseName.set("${project.name}-fat")
     manifest {
         attributes["Implementation-Title"] = "Gamesense Essentials"
         attributes["Implementation-Version"] = archiveVersion
@@ -52,7 +52,7 @@ tasks {
 }
 
 application {
-    mainClassName = "dev.tricht.gamesense.MainKt"
+    mainClass.set("dev.tricht.gamesense.MainKt")
 }
 
 // TODO: Use github actions...
