@@ -25,7 +25,7 @@ dependencies {
 
 tasks {
     compileKotlin {
-        kotlinOptions.jvmTarget = "17"
+        kotlinOptions.jvmTarget = JavaVersion.VERSION_21.majorVersion
     }
 }
 
@@ -36,6 +36,7 @@ java {
 
 val fatJar = task("fatJar", type = Jar::class) {
     archiveBaseName.set("${project.name}-fat")
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     manifest {
         attributes["Implementation-Title"] = "Gamesense Essentials"
         attributes["Implementation-Version"] = archiveVersion
