@@ -3,7 +3,7 @@ import org.gradle.jvm.tasks.Jar
 plugins {
     kotlin("jvm") version "1.8.20"
     java
-    id("org.beryx.runtime") version "1.13.0"
+    id("org.beryx.runtime") version "1.13.1"
 }
 
 group = "dev.tricht.gamesense"
