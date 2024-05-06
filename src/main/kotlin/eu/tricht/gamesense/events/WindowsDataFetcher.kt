@@ -23,7 +23,7 @@ class WindowsDataFetcher() : DataFetcher {
     private var iTunes: ActiveXComponent? = null
     private var iTunesTimeout = 0
     private var masterVolumeTimeout = 0
-    private val players = "(Spotify|MusicBee|AIMP|YouTube Music Desktop App).exe".toRegex()
+    private val players = "(Spotify|MusicBee|AIMP|YouTube Music Desktop App|TIDAL).exe".toRegex()
 
     override fun getVolume(): Int {
         if (masterVolumeTimeout == 25) {
@@ -63,6 +63,9 @@ class WindowsDataFetcher() : DataFetcher {
                 }
                 if (wText.contains(" - ")) {
                     song = wText.replace(" - MusicBee", "")
+                    if (processPath.endsWith("TIDAL.exe")) {
+                        song = "${song.split(" - ")[1]} - ${song.split(" - ")[0]}"
+                    }
                 }
             }
             if (processPath.endsWith("iTunes.exe")) {
