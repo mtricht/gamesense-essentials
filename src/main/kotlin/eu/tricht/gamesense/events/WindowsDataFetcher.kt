@@ -23,7 +23,7 @@ class WindowsDataFetcher() : DataFetcher {
     private var iTunes: ActiveXComponent? = null
     private var iTunesTimeout = 0
     private var masterVolumeTimeout = 0
-    private val players = "(Spotify|MusicBee|AIMP|YouTube Music Desktop App|TIDAL).exe".toRegex()
+    private val players = "(Spotify|MusicBee|AIMP|YouTube Music Desktop App|TIDAL|Qobuz).exe".toRegex()
 
     override fun getVolume(): Int {
         if (masterVolumeTimeout == 25) {
