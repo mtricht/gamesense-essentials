@@ -5,7 +5,6 @@ import eu.tricht.gamesense.com.steelseries.ApiClient
 import eu.tricht.gamesense.com.steelseries.ApiClientFactory
 import eu.tricht.gamesense.com.steelseries.model.*
 import eu.tricht.gamesense.events.EventProducer
-import eu.tricht.gamesense.events.WindowsDataFetcher
 import java.util.*
 import java.util.prefs.Preferences
 import kotlin.system.exitProcess

@@ -9,15 +9,17 @@ import eu.tricht.gamesense.model.SongInformation
 import java.net.ConnectException
 import java.text.DateFormat
 import java.util.*
+import kotlin.math.roundToInt
 
 class EventProducer : TimerTask() {
-    private val dataFetcher = WindowsDataFetcher()
+    private val dataFetcher = DataFetcher()
     private var client = ApiClientFactory().createApiClient()
     private val dateFormat = DateFormat.getTimeInstance(0)
     private var volume: Int? = null
     private var waitTicks = 0
     private var displayClockPeriodically = 0
     private var currentSong: SongInformation? = null
+    private var masterVolumeTimeout = 0
 
     override fun run() {
         try {
@@ -29,7 +31,7 @@ class EventProducer : TimerTask() {
 
     private fun handleTick() {
         val oldVolume = this.volume
-        this.volume = dataFetcher.getVolume()
+        this.volume = getVolume()
         if (oldVolume != null && this.volume != oldVolume) {
             sendVolumeEvent()
             return
@@ -56,6 +58,14 @@ class EventProducer : TimerTask() {
             return
         }
         sendClockEvent()
+    }
+
+    private fun getVolume(): Int {
+        if (masterVolumeTimeout == 25) {
+            masterVolumeTimeout = 0
+        }
+        masterVolumeTimeout++
+        return (SoundUtil.getMasterVolumeLevel() * 100).roundToInt()
     }
 
     private fun sendClockEvent() {
