@@ -35,6 +35,8 @@ class SystemTray {
                 createSettingMenuItem("Enable song icon", "songIcon"),
                 createSettingMenuItem("Flip song title and artist", "songInfoFlip", false),
                 createSettingMenuItem("Display song scrolling separator", "songSeparator", false),
+                createSettingMenuItem("Enable calculator (Need numpad)", "calculator"),
+                createSettingMenuItem("Use algebraic calculator", "calculatorIsAlgebraic", false),
                 tickRate,
                 exit
             ).forEach(menu::add)
@@ -65,6 +67,9 @@ class SystemTray {
                     timer.purge()
                     timer = Timer()
                     Main.startTimer()
+                }
+                if (setting == "calculatorIsAlgebraic") {
+                    Main.eventProducer!!.calculator.reset()
                 }
             }
             settingMenuItem.state = preferences.get(setting, default.toString()).toBoolean()
