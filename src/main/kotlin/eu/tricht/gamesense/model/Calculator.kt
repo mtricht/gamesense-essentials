@@ -309,9 +309,7 @@ class Calculator {
     }
 
     private fun evaluateInfix(expression: List<String>): Double {
-        println(expression)
         val postfix = infixToPostfix(expression)
-        println(postfix)
         return evalPostfix(postfix)
     }
 
