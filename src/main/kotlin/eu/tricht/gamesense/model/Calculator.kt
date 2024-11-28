@@ -39,7 +39,7 @@ class Calculator {
                     } else if (nativeEvent.keyCode == 3638) { // RShift
                         rShiftOn = true
                     } else if (isNumpadKey(nativeEvent.keyCode)) {
-                        if (!numpadOn) {
+                        if (if (!preferences.get("calculatorNumpadFlip", "false").toBoolean()) !numpadOn else numpadOn) {
                             return
                         }
 
@@ -65,12 +65,27 @@ class Calculator {
                         }
 
                         var text = NativeKeyEvent.getKeyText(nativeEvent.keyCode).toCharArray()[0]
+                        if (preferences.get("calculatorNumpadFlip", "false").toBoolean()) {
+                            when (nativeEvent.keyCode) {
+                                3666 -> text = '0'
+                                3663 -> text = '1'
+                                57424 -> text = '2'
+                                3665 -> text = '3'
+                                57419 -> text = '4'
+                                57420 -> text = '5'
+                                57421 -> text = '6'
+                                3655 -> text = '7'
+                                57416 -> text = '8'
+                                3657 -> text = '9'
+                            }
+                        }
                         when (nativeEvent.keyCode) {
                             53 -> { text = '/' }
                             3639 -> { text = '*' }
                             3658 -> { text = '-' }
                             3662 -> { text = '+' }
                             83 -> { text = '.' }
+                            3667 -> { text = '.' }
                             7 -> if (shiftOn) { text = '^' }
                             10 -> if (shiftOn) { text = '(' }
                             11 -> if (shiftOn) { text = ')' }
@@ -147,8 +162,25 @@ class Calculator {
     }
 
     private fun isNumpadKey(keyCode: Int): Boolean {
+        val numpadNumbers = if (!preferences.get("calculatorNumpadFlip", "false").toBoolean()) {
+            2..11 // Numpad number keys
+        } else {
+            listOf(
+                3666, // 0
+                3663, // 1
+                57424, // 2
+                3665, // 3
+                57419, // 4
+                57420, // 5
+                57421, // 6
+                3655, // 7
+                57416, // 8
+                3657, // 9
+            ) // Alternative keys
+        }
+
         return when (keyCode) {
-            in 2..11 -> true // 0-9
+            in numpadNumbers -> true // 0-9
             53 -> true // /
             3639 -> true // *
             3658 -> true // -

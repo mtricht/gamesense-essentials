@@ -37,6 +37,7 @@ class SystemTray {
                 createSettingMenuItem("Display song scrolling separator", "songSeparator", false),
                 createSettingMenuItem("Enable calculator (Need numpad)", "calculator"),
                 createSettingMenuItem("Use algebraic calculator", "calculatorIsAlgebraic", false),
+                createSettingMenuItem("Flip calculator numpad", "calculatorNumpadFlip", false),
                 tickRate,
                 exit
             ).forEach(menu::add)
