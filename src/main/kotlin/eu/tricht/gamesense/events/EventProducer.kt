@@ -6,6 +6,7 @@ import eu.tricht.gamesense.com.steelseries.model.Data
 import eu.tricht.gamesense.com.steelseries.model.Event
 import eu.tricht.gamesense.com.steelseries.model.Frame
 import eu.tricht.gamesense.model.SongInformation
+import eu.tricht.gamesense.model.Calculator
 import java.net.ConnectException
 import java.text.DateFormat
 import java.util.*
@@ -20,6 +21,8 @@ class EventProducer : TimerTask() {
     private var displayClockPeriodically = 0
     private var currentSong: SongInformation? = null
     private var masterVolumeTimeout = 0
+    public var calculator = Calculator()
+    private var toggleInsertionPoint = false
 
     override fun run() {
         try {
@@ -47,6 +50,10 @@ class EventProducer : TimerTask() {
             sendClockEvent()
             displayClockPeriodically = Tick.msToTicks(10000)
             waitTicks = Tick.msToTicks(2000)
+            return
+        }
+        if (preferences.get("calculator", "true").toBoolean() && (if (!preferences.get("calculatorNumpadFlip", "false").toBoolean())  calculator.numpadOn else !calculator.numpadOn)) {
+            sendCalculatorEvent()
             return
         }
         val potentialSong = dataFetcher.getCurrentSong()
@@ -114,6 +121,24 @@ class EventProducer : TimerTask() {
                 VOLUME_EVENT,
                 Data(
                     this.volume!!
+                )
+            )
+        ).execute()
+    }
+
+    private fun sendCalculatorEvent() {
+        toggleInsertionPoint = !toggleInsertionPoint
+        waitTicks = Tick.msToTicks(200)
+        client.sendEvent(
+            Event(
+                GAME_NAME,
+                CALCULATOR_EVENT,
+                Data(
+                    "${if (toggleInsertionPoint) {calculator.inputDisplay.replace("|", "")} else {calculator.inputDisplay.replace("|", "|")}}:${if (toggleInsertionPoint) {calculator.answerDisplay.replace("|", "")} else {calculator.answerDisplay.replace("|", "|")}}",
+                    Frame(
+                        if (toggleInsertionPoint) {calculator.inputDisplay.replace("|", "")} else {calculator.inputDisplay.replace("|", "|")},
+                        if (toggleInsertionPoint) {calculator.answerDisplay.replace("|", "")} else {calculator.answerDisplay.replace("|", "|")}
+                    )
                 )
             )
         ).execute()
