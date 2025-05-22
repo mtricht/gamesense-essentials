@@ -8,12 +8,17 @@ import eu.tricht.gamesense.events.EventProducer
 import java.util.*
 import java.util.prefs.Preferences
 import kotlin.system.exitProcess
+import com.github.kwhat.jnativehook.GlobalScreen
+import com.github.kwhat.jnativehook.NativeHookException
+import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent
+import com.github.kwhat.jnativehook.keyboard.NativeKeyListener
 
 val mapper = jacksonObjectMapper()
 const val GAME_NAME = "GAMESENSE_ESSENTIALS"
 const val CLOCK_EVENT = "CLOCK"
 const val VOLUME_EVENT = "VOLUME"
 const val SONG_EVENT = "SONG"
+const val CALCULATOR_EVENT = "CALCULATOR"
 var timer = Timer()
 var client: ApiClient? = null
 var preferences: Preferences = Preferences.userNodeForPackage(Main::class.java)
@@ -27,6 +32,8 @@ fun main() {
 
 class Main {
     companion object {
+        var eventProducer: EventProducer? = null
+
         fun registerHandlers(client: ApiClient) {
             registerClockHandler(client)
             val volumeHandler = EventRegistration(
@@ -60,6 +67,7 @@ class Main {
                 exitProcess(1)
             }
             registerSongHandler(client)
+            registerCalculatorHandler(client)
         }
 
         fun registerClockHandler(client: ApiClient) {
@@ -94,10 +102,10 @@ class Main {
                                 MultiLine(
                                     listOf(
                                         HandlerData(
-                                            contextFrameKey = "artist"
+                                            contextFrameKey = "text2"
                                         ),
                                         HandlerData(
-                                            contextFrameKey = "song"
+                                            contextFrameKey = "text1"
                                         )
                                     ),
                                     if (preferences.get("songIcon", "true")!!.toBoolean()) 23 else 0
@@ -107,11 +115,11 @@ class Main {
                     ),
                     listOf(
                         DataField(
-                            "song",
+                            "text1",
                             "Song"
                         ),
                         DataField(
-                            "artist",
+                            "text2",
                             "Artist"
                         )
                     )
@@ -131,10 +139,10 @@ class Main {
                                 MultiLine(
                                     listOf(
                                         HandlerData(
-                                            contextFrameKey = "song"
+                                            contextFrameKey = "text1"
                                         ),
                                         HandlerData(
-                                            contextFrameKey = "artist"
+                                            contextFrameKey = "text2"
                                         )
                                     ),
                                     if (preferences.get("songIcon", "true")!!.toBoolean()) 23 else 0
@@ -144,11 +152,11 @@ class Main {
                     ),
                     listOf(
                         DataField(
-                            "song",
+                            "text1",
                             "Song"
                         ),
                         DataField(
-                            "artist",
+                            "text2",
                             "Artist"
                         )
                     )
@@ -161,8 +169,47 @@ class Main {
             }
         }
 
+        fun registerCalculatorHandler(client: ApiClient) {
+            val calculatorHandler = EventRegistration(
+                GAME_NAME,
+                CALCULATOR_EVENT,
+                listOf(
+                    Handler(
+                        listOf(
+                            MultiLine(
+                                listOf(
+                                    HandlerData(
+                                        contextFrameKey = "text1"
+                                    ),
+                                    HandlerData(
+                                        contextFrameKey = "text2"
+                                    )
+                                )
+                            )
+                        )
+                    )
+                ),
+                listOf(
+                    DataField(
+                        "text1",
+                        "Input"
+                    ),
+                    DataField(
+                        "text2",
+                        "Answer"
+                    )
+                )
+            )
+            val response = client.addEvent(calculatorHandler).execute()
+            if (!response.isSuccessful) {
+                println("Failed to add calculator handler, error: " + response.errorBody()?.string())
+                exitProcess(1)
+            }
+        }
+
         fun startTimer() {
-            timer.schedule(EventProducer(), 0, Tick.tickRateInMs())
+            eventProducer = EventProducer()
+            timer.schedule(eventProducer, 0, Tick.tickRateInMs())
         }
     }
 }
