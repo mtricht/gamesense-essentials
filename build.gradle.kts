@@ -1,7 +1,7 @@
 import org.gradle.jvm.tasks.Jar
 
 plugins {
-    kotlin("jvm") version "2.1.21"
+    kotlin("jvm") version "2.2.0"
     java
     id("org.beryx.runtime") version "1.13.1"
 }
