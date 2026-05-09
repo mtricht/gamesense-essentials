@@ -1,6 +1,6 @@
 package eu.tricht.gamesense.com.steelseries.model
 
 data class Frame(
-    val song: String,
-    val artist: String
+    val text1: String,
+    val text2: String
 )
